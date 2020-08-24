@@ -32,6 +32,7 @@ export default {
   ** Global CSS
   */
   css: [
+    'element-ui/lib/theme-chalk/index.css'
   ],
 
   /*
@@ -39,6 +40,7 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
+    '@/plugins/all-globals'
   ],
 
   /*
