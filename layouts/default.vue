@@ -1,15 +1,26 @@
 <template>
   <el-container>
-    <el-header>Header</el-header>
+    <el-header height="70px" class="el-header-main-layout">
+      <Navigation />
+    </el-header>
     <el-container>
       <el-aside width="200px">Aside</el-aside>
       <el-main>
         <Nuxt />
       </el-main>
     </el-container>
-    <el-footer>Footer</el-footer>
+    <el-footer class="el-footer-main-layout">Footer</el-footer>
   </el-container>
 </template>
+
+<script>
+import Navigation from './../components/site/Navigation'
+export default {
+  components: {
+    Navigation
+  }
+}
+</script>
 
 <style>
 html {
@@ -29,5 +40,12 @@ html {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+}
+.el-header-main-layout{
+  padding: 0;
+}
+.el-footer-main-layout{
+  padding: 0;
+  background-color:#cc6699;
 }
 </style>
