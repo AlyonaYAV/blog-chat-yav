@@ -1,14 +1,10 @@
 <template>
   <div>
-    <v-app dark>
-      <v-layout column justify-center align-center>
-        <v-flex xs12 sm8 md6>
-          <v-btn @click="message" color="info">
-            Message
-          </v-btn>
-        </v-flex>
-      </v-layout>
-    </v-app>
+    <el-row type="flex" justify="center">
+      <el-col :xs="4" :sm="18" :md="12" :lg="10">
+        <blog-post v-for="post in 3" :key="post" />
+      </el-col>
+    </el-row>
     {{ test }}
     <hr>
     <el-button type="success">
@@ -26,7 +22,14 @@
   </div>
 </template>
 <script>
+import BlogPost from '@/components/site/Post'
 export default {
+  components: {
+    BlogPost
+  },
+  had: {
+    title: 'Main pets page'
+  },
   sockets: {
     connect () {
       console.log('socket connected')
