@@ -6,7 +6,7 @@ export default {
         themes: {
 
             light: {
-                primary: '#197602',
+                primary: '#75324C',
                 secondary: colors.teal.lighten3,
                 accent: colors.teal.accent4,
 
