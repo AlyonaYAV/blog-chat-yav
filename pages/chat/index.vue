@@ -54,7 +54,7 @@
 <script>
 import { mapMutations } from 'vuex'
 export default {
-  layout: 'chat/empty',
+  layout: 'chat/index',
   head: {
     title: 'Chat for pet owners'
   },
