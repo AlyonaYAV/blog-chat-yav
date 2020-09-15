@@ -32,13 +32,18 @@ io.on('connection', socket => {
         text: `User ${dataUser.name} has entered to chat`
       })
     })
+    socket.on('createMessage', (data)=>{
+      setTimeout(()=>{
+          socket.emit('newMessage', { text: data.text + ' SERVER' } )
+      },1000 )
+  })
     /*
     // console.log("ID Connected");
     socket.emit('newMessage', { text: 'Bear' })
     //
     socket.on('createMessage', (data)=>{
         setTimeout(()=>{
-            socket.emit('newMessage', { test: data.text + 'SERVER' } )
+            socket.emit('newMessage', { text: data.text + 'SERVER' } )
         },1000 )
     }) */
 })

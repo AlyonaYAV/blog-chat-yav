@@ -50,7 +50,7 @@
                         <v-row
                             :style="withSidebar"
                         >
-                            <v-col>
+                            <v-col class="chat-pets-cols-bottom">
                                 <v-toolbar style="top:-20px !important;">
                                     <v-container>
                                         <v-row v-bind:no-gutters="true">
@@ -109,8 +109,14 @@
                             </v-col>
                         </v-row>
                         <v-row justify="center" align="center">
-                            <v-col xs="10" sm="10" md="10" lg="10" xl="10">
-                                <v-main>
+                            <v-col
+                                xs="10"
+                                sm="10"
+                                md="10"
+                                lg="10"
+                                xl="10"
+                                class="chat-pets-cols-top">
+                                <v-main class="chat-pets-content">
                                     <Nuxt />
                                 </v-main>
                             </v-col>
@@ -141,13 +147,7 @@ export default {
   data () {
     return {
       drawer: true,
-      cols: 9,
-      users: [
-        { id: 1, name: 'User 1' },
-        { id: 2, name: 'User 2' },
-        { id: 3, name: 'User 3' },
-        { id: 4, name: 'User 4' }
-      ]
+      cols: 9
     }
   },
   methods: {
@@ -162,8 +162,16 @@ export default {
 </script>
 
 <style lang="scss">
-.el-footer-main-layout{
-  padding:0;
+.chat-pets-cols-top{
+  padding-top: 0px;
+}
+.chat-pets-cols-bottom{
+  padding-bottom: 0px;
+}
+.chat-pets-content{
+  height: 50vh;
+  border: 1px solid blue;
   background-color:#cc6699;
+  padding-bottom: 0px !important;
  }
 </style>
