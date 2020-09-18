@@ -1,9 +1,10 @@
 <template>
     <v-text-field
-        label="Outlined"
+        label="Message text"
         outlined
         v-model="formText"
         @keydown.enter="addMessage"
+        background-color="#D3C4D1"
     ></v-text-field>
 </template>
 
@@ -25,7 +26,7 @@ export default {
         if (typeof data === 'string') {
           console.error(data)
         } else {
-          this.text = ''
+          this.formText = ''
         }
       })
     }
