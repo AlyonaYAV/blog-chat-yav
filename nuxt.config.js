@@ -42,7 +42,8 @@ export default {
   plugins: [
     '@/plugins/all-globals',
     //There is no need server side rendering and render it only client side
-    {src: '@/plugins/socket', ssr: false}
+    {src: '@/plugins/socket', ssr: false},
+    '@/plugins/eventBus'
   ],
 
   /*
