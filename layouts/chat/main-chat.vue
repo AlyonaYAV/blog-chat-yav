@@ -27,11 +27,11 @@
                                 @click.prevent=""
                             >
                                 <v-list-item-icon>
-                                    <v-icon v-if="u.icon" color="pink">mdi-star</v-icon>
+                                    <v-icon v-if="u.icon" color="#F7E7F5">mdi-star</v-icon>
                                 </v-list-item-icon>
 
                                 <v-list-item-content>
-                                    <v-list-item-title v-text="u.name"></v-list-item-title>
+                                    <v-list-item-title v-if="u.name" v-text="u.name"></v-list-item-title>
                                 </v-list-item-content>
 
                                 <v-list-item-avatar>
@@ -39,7 +39,7 @@
                                 </v-list-item-avatar>
 
                                 <v-list-item-icon>
-                                    <v-icon >mdi-comment-processing-outline</v-icon>
+                                    <v-icon :color="u.id === user.id ? 'pink' : 'grey'">mdi-comment-processing-outline</v-icon>
                                 </v-list-item-icon>
                             </v-list-item>
                         </v-list>
@@ -69,7 +69,7 @@
                                                     :outlined="true"
                                                     icon
                                                     :absolute="true"
-                                                    style="right:25px;top:5px;background:antiquewhite;"
+                                                    style="right:25px;top:5px;background:#F7E7F5;"
                                                     @click="exit"
                                                     class="hidden-xs-only">
                                                     <v-icon>mdi-home</v-icon>
@@ -139,7 +139,7 @@ export default {
     Navigation
   },
   computed: {
-    ...mapState(['user']),
+    ...mapState(['user', 'users']),
     withSidebar () {
       return this.drawer ? 'margin-left:-12px' : 'margin-left:-6px'
     }
@@ -153,9 +153,11 @@ export default {
   methods: {
     ...mapMutations(['clearData']),
     exit () {
-      // Use mutation to reset state.user
-      this.clearData()
-      this.$router.push('/?message=leftChat')
+      this.$socket.emit('userLeft', this.user.id, () => {
+        // Use mutation to reset state.user
+        this.clearData()
+        this.$router.push('/?message=leftChat')
+      })
     }
   }
 }
@@ -169,9 +171,9 @@ export default {
   padding-bottom: 0px;
 }
 .chat-pets-content{
-  height: 50vh;
-  border: 1px solid blue;
-  background-color:#cc6699;
+  height: 65vh;
+  border: 1px solid #D3C4D1;
+  background-color: #F7E7F5;
   padding-bottom: 0px !important;
  }
 </style>
