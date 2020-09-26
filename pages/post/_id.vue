@@ -28,12 +28,26 @@
             <p>Lorem, ipsum dolor sit amet consectetur Lorem, ipsum dolor sit amet consectetur</p>
         </main>
         <footer class="posts-details__comments">
+            <div v-if="true">
+                <blog-comment
+                    v-for="(comment, ind) in 2"
+                    :key="ind"
+                    :comment="comment"
+                ></blog-comment>
+            </div>
+            <div v-else class="posts-details__comments-absent">
+                Comments are absent
+            </div>
         </footer>
     </article>
 </template>
 
 <script>
+import BlogComment from '@/components/site/Comment'
 export default {
+  components: {
+    BlogComment
+  },
   validate ({ params }) {
     return Boolean(params.id)
   }
@@ -69,6 +83,9 @@ export default {
             margin-bottom: 2rem;
         }
         .post-details__comments {
+        }
+        .posts-details__comments-absent{
+            text-align: center;
         }
     }
 </style>
