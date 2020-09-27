@@ -28,7 +28,10 @@
             <p>Lorem, ipsum dolor sit amet consectetur Lorem, ipsum dolor sit amet consectetur</p>
         </main>
         <footer class="posts-details__comments">
-            <blog-comment-form/>
+            <blog-comment-form
+              v-if="commentAllowed"
+              @commentAdded="commentAddedHandler"
+            />
             <div v-if="true">
                 <blog-comment
                     v-for="(comment, ind) in 2"
@@ -53,8 +56,19 @@ export default {
   },
   validate ({ params }) {
     return Boolean(params.id)
+  },
+  data () {
+    return {
+      commentAllowed: true
+    }
+  },
+  methods: {
+    commentAddedHandler () {
+      this.commentAllowed = false
+    }
   }
 }
+
 </script>
 
 <style lang="scss" scoped>
