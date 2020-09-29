@@ -4,7 +4,9 @@
             Header
         </el-header>
         <el-container>
-            <el-aside class="el-aside-main-layout">Aside</el-aside>
+            <el-aside class="el-aside-main-layout">
+              <menu-aside />
+            </el-aside>
             <el-main>
                 <Nuxt />
             </el-main>
@@ -14,7 +16,9 @@
 </template>
 
 <script>
+import MenuAside from '@/components/admin/MenuAside'
 export default {
+  components: { MenuAside }
 }
 </script>
 
@@ -27,7 +31,7 @@ export default {
   background-color:#cc6699;
 }
 .el-aside-main-layout{
-  width: 250px;
+  width: 250px !important;
   background-color: #F8E2EC;
 
 }
