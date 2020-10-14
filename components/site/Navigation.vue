@@ -1,14 +1,14 @@
 <template>
     <nav>
         <el-menu
-            :default-active="activeIndex1"
+            router
+            :default-active="$route.path"
             class="el-menu-pets"
             mode="horizontal"
-            @select="handleSelect"
             background-color="#cc6699"
             text-color="#f7edf2"
             active-text-color="#33041b">
-            <el-menu-item index="1" class="el-menu-pets__item">Funy Pets</el-menu-item>
+            <el-menu-item index="/" class="el-menu-pets__item">Funy Pets</el-menu-item>
             <el-submenu index="2" class="el-menu-pets__item_sub">
                 <template slot="title">My home pets</template>
                 <el-submenu index="2-1">
@@ -26,9 +26,9 @@
                         <el-menu-item index="2-3-1">Robby</el-menu-item>
                     </el-submenu>
             </el-submenu>
-            <el-menu-item index="3" class="el-menu-pets__item">About</el-menu-item>
-            <el-menu-item index="4" class="el-menu-pets__item">Contacts</el-menu-item>
-            <el-menu-item index="5" class="el-menu-pets__item" disabled>Chat</el-menu-item>
+            <el-menu-item index="/about" class="el-menu-pets__item">About</el-menu-item>
+            <el-menu-item index="/contacts" class="el-menu-pets__item">Contacts</el-menu-item>
+            <el-menu-item index="/chat" class="el-menu-pets__item">Chat</el-menu-item>
         </el-menu>
     </nav>
 </template>
