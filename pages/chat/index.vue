@@ -41,7 +41,7 @@
     </v-row>
     <v-row justify="center" align="center">
       <v-col xs="12" md="8" lg="6">
-        <v-snackbar v-model="snackbar" color="#F0CFF1" :timeout="100000" bottom class="snackbar-text">
+        <v-snackbar v-model="snackbar" color="#F0CFF1" :timeout="7000" bottom class="snackbar-text">
           {{ message }}
           <v-divider></v-divider>
           <v-btn color="#BD519A" @click="snackbar = false">Close</v-btn>
