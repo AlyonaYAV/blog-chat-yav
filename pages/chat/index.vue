@@ -2,49 +2,46 @@
   <v-main>
     <v-row justify="center" align="center">
         <v-col xs="12" md="8" lg="6">
-            <v-card max-width="50%" color="#EFCCD9" style="margin:0px auto">
-                <v-card-title>The pet owners chat</v-card-title>
+            <v-card max-width="50%" color="#F6E8F4" style="margin:0px auto">
+                <v-card-title>The pets chat</v-card-title>
                 <v-card-text>
-                    <v-form
-                        ref="form"
-                        v-model="valid"
-                        lazy-validation
-                    >
-                        <v-text-field
-                        v-model="name"
-                        :counter="16"
-                        :rules="nameRules"
-                        label="Enter your name"
-                        required
-                        ></v-text-field>
-
-                        <v-text-field
-                        v-model="room"
-                        :rules="roomRules"
-                        label="Enter room name"
-                        required
-                        ></v-text-field>
-
-                        <v-btn
-                        :disabled="!valid"
-                        color="primary"
-                        class="mr-4"
-                        @click="submit"
-                        style="color:rgba(247,237,242,1)"
-                        >
-                        Enter
-                        </v-btn>
-                    </v-form>
+                  <v-chip class="ma-2 pets-chip" color="#C175B4" label>
+                    <v-icon left>
+                      mdi-account-circle-outline
+                    </v-icon>
+                    {{ currentName }}
+                  </v-chip>
+                  <v-select
+                    v-if="rooms.length"
+                    :items="rooms.map(room => room.name)"
+                    label="Chat rooms"
+                    @change="selectRoom"
+                  ></v-select>
+                  <v-chip
+                    v-else
+                    class="ma-2"
+                    color="pink"
+                    label
+                    text-color="white"
+                  >
+                    <v-icon left>
+                      mdi-compare-horizontal
+                    </v-icon>
+                    No rooms
+                  </v-chip>
+                  <v-btn depressed color="#C175B4" class="bt-chat-enter" small @click="roomEnter">
+                    Enter chat
+                  </v-btn>
                 </v-card-text>
             </v-card>
         </v-col>
     </v-row>
     <v-row justify="center" align="center">
       <v-col xs="12" md="8" lg="6">
-        <v-snackbar v-model="snackbar" color="#F0CFF1" :timeout="7000" bottom class="snackbar-text">
+        <v-snackbar v-model="snackbar" color="#F6E8F4" :timeout="7000" bottom class="snackbar-text">
           {{ message }}
           <v-divider></v-divider>
-          <v-btn color="#BD519A" @click="snackbar = false">Close</v-btn>
+          <v-btn color="#C175B4" @click="snackbar = false">Close</v-btn>
         </v-snackbar>
       </v-col>
     </v-row>
@@ -56,7 +53,7 @@ import { mapMutations } from 'vuex'
 export default {
   layout: 'chat/index',
   head: {
-    title: 'Chat for pet owners'
+    title: 'Pets Chat'
   },
   sockets: {
     connect () {
@@ -67,27 +64,33 @@ export default {
     }
   },
   data: () => ({
-    snackbar: false,
-    message: '',
-    valid: true,
-    name: '',
-    nameRules: [
-      v => !!v || 'Name is required',
-      v => (v && v.length <= 16) || 'Name must be less than 16 characters'
+    currentName: 'John Leider',
+    currentRoom: '',
+    rooms: [
+      { name: 'funny', description: 'Funny is good' },
+      { name: 'happy', description: 'Happy is good' }
     ],
-    room: '',
-    roomRules: [
-      v => !!v || 'Room is required'
-      // v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
-    ]
+    snackbar: false,
+    message: ''
   }),
   methods: {
     ...mapMutations('chat', ['addUser']),
-    submit () {
-      if (this.$refs.form.validate()) {
+    selectRoom (roomName) {
+      // roomName - current selected room as a String
+      if (roomName) {
+        const resultRoom = this.rooms.filter(room => room.name === roomName)
+        // Assing current room name
+        this.currentRoom = resultRoom[0].name
+        // Show details about the current room
+        this.message = resultRoom[0].description
+        this.snackbar = true
+      }
+    },
+    roomEnter () {
+      /* eslint-disable */
         const user = {
-          name: this.name,
-          room: this.room
+          name: this.currentName,
+          room: this.currentRoom
         }
         // Send data by socket to the server to get an unique ID of the user connection
         this.$socket.emit('userJoined', user, (data) => {
@@ -100,14 +103,13 @@ export default {
             user.id = data.userId
             // Use mutation from Vuex
             this.addUser(user)
-            // Rederect User to the Chat
+            // Redirect User to the Chat
             this.$router.push('/chat/main-chat')
           }
         })
-      }
     } /*,
     message () {
-      // console.log('ok')
+      // console.log('Ok')
       this.$socket.emit('createMessage', { text: 'From client' })
     } */
   },
@@ -125,6 +127,16 @@ export default {
 </script>
 
 <style lang="scss">
+.v-card__text{
+  .pets-chip{
+    width:100%;
+    margin: 0 auto!important;
+    color: white!important;
+  }
+  .bt-chat-enter {
+    color: white!important;
+  }
+}
 .snackbar-text .v-snack__content{
   text-align: center;
   color: #000;
