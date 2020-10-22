@@ -21,7 +21,7 @@ module.exports = new Strategy(options, async (payload, done) => {
       done(null, applicant)
     } else {
       // Authorization for spacific Route is restricted
-      done(nall, false)
+      done(null, false)
     }
   } catch (e) {
     console.error(e)
