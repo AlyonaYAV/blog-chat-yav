@@ -6,7 +6,6 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 // Passport library for restricting Routes
 const passport = require('passport')
-/*
 const strategyPassport = require('./middleware/passport-strategy')
 // Config keys
 const keys = require('./config/keys')
@@ -36,7 +35,7 @@ app.use(bodyParser.json())
 // Import API Routes
 app.use('/auth',auth)
 app.use('/post',post)
-app.use('/comment',comment)*/
+app.use('/comment',comment)
 
 // Export express app
 module.exports = app

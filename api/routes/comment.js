@@ -3,6 +3,6 @@ const { createComment } = require('./../controllers/comment')
 const router = Router()
 
 // /api/comment
-router.post('/',createComment)
+router.post('/', createComment)
 
 module.exports = router
