@@ -1,5 +1,6 @@
 export const state = () => ({
-  token: null
+  token: null,
+  testDataUser: null
 })
 
 export const mutations = {
@@ -8,6 +9,9 @@ export const mutations = {
   },
   clearToken (state) {
     state.token = null
+  },
+  testSetDataUser (state, dataUser) {
+    state.testDataUser = dataUser
   }
 }
 
@@ -15,9 +19,11 @@ export const actions = {
   // Authorize in the system
   login ({ commit, dispatch }, data) {
     try {
-      const { token } = this.$axios.$post('/api/auth/admin/login', data)
-      console.log('Token ', token)
-        /*eslint-disable*/
+      // const { token } = this.$axios.$post('/api/auth/admin/login', data)
+      const token = 'token-test'
+      commit('testSetDataUser', data)
+      // console.log('Token ', token)
+      /* eslint-disable */
       dispatch('setToken', token)
     } catch (e) {
       // Commit mutation
@@ -34,9 +40,12 @@ export const actions = {
   async userCreation ({ commit }, data) {
     // Request
     try {
-      console.log('User created ', data)
+      await this.$axios.$post('/api/auth/admin/create', data)
+      // console.log('User created ', data)
     } catch (e) {
-
+      // Commit mutation, 'e' - axios is an object error
+      commit('error/setError', e, {root: true})
+      throw e
     }
   }
 }
