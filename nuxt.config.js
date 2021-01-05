@@ -4,7 +4,8 @@ export default {
   ** Nuxt rendering mode
   ** See https://nuxtjs.org/api/configuration-mode
   */
-  mode: 'universal',
+  //mode: 'universal', // It's deprecated use ssr instead
+  ssr: true, //default value
 
   /*
   ** Nuxt target
@@ -58,7 +59,7 @@ export default {
   */
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
-    '@nuxtjs/eslint-module',
+    // '@nuxtjs/eslint-module',
     '@nuxtjs/vuetify',
   ],
 
