@@ -14,7 +14,7 @@ async function register(req, res, next){
     let errorStatus = false;
     for(let i = 0;i < errorsArr.length;i++){
       if(errorsArr[i].param === 'email' && errorsArr[i].msg.emailIsBusy){
-        errorsArr[i].msg = errorsArr[i].msg.txt;
+        errorsArr[i].msg = errorsArr[i].msg.message;
         errorsStatus = true;
         break;
       }
