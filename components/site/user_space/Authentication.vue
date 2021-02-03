@@ -8,7 +8,7 @@
             background-color="#cc6699"
             text-color="#f7edf2">
             <el-menu-item index="/login" class="el-menu-pets__item">Sign in</el-menu-item>
-            <el-menu-item index="/" class="el-menu-pets__item">Sign up</el-menu-item>
+            <el-menu-item index="/register" class="el-menu-pets__item">Sign up</el-menu-item>
         </el-menu>
     </div>
 </template>
