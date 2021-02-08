@@ -1,22 +1,15 @@
 <template>
     <v-app>
         <v-container fluid style="padding:0px !important;">
-            <v-row v-bind:no-gutters="true">
-                <v-col xs="12" sm="12" md="12" lg="12" xl="12">
-                    <el-container>
-                        <el-header height="80px" class="el-header-main-layout">
-                            <Navigation />
-                        </el-header>
-                    </el-container>
-                </v-col>
-            </v-row>
+            <header-chat></header-chat>
             <v-row v-bind:no-gutters="true" style="position:relative;">
                 <v-col xs="3" sm="3" md="3" lg="3" xl="3">
-                    <v-navigation-drawer absolute v-model="drawer" :width="330" :height="400" style="top:-10px;">
+                    <v-navigation-drawer absolute v-model="drawer" :width="330" :height="400" style="top:0px;">
                         <v-alert
                             border="bottom"
                             color="#B34591"
                             dark
+                            class="pets-text-center"
                         >
                             All people in the chat room
                         </v-alert>
@@ -51,7 +44,7 @@
                             :style="withSidebar"
                         >
                             <v-col class="chat-pets-cols-bottom">
-                                <v-toolbar style="top:-20px !important;">
+                                <v-toolbar style="top:-12px !important;">
                                     <v-container>
                                         <v-row v-bind:no-gutters="true">
                                             <v-col xs="6" sm="6" md="6" lg="6" xl="6">
@@ -84,7 +77,7 @@
                                                     dark
                                                     :height="20"
                                                     :absolute="true"
-                                                    style="cursor:auto;bottom:1%;left:10%;"
+                                                    style="cursor:auto;bottom:18%;left:10%;"
                                                 >
                                                     <v-icon dark :left="true">mdi-human-greeting</v-icon>
                                                     Visitor name is: {{ user.name }}
@@ -97,7 +90,7 @@
                                                     dark
                                                     :height="20"
                                                     :absolute="true"
-                                                    style="cursor:auto;bottom:1%;right:10%;"
+                                                    style="cursor:auto;bottom:18%;right:10%;"
                                                 >
                                                     <v-icon dark :left="true">mdi-door-open</v-icon>
                                                     Chat room name is: {{ user.room }}
@@ -132,11 +125,11 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
-import Navigation from './../../components/site/Navigation'
+import { mapState, mapMutations } from 'vuex';
+import HeaderChat from './../../components/site/chat/Header-Chat';
 export default {
   components: {
-    Navigation
+    HeaderChat
   },
   computed: {
     ...mapState('chat', ['user', 'users']),
@@ -175,5 +168,8 @@ export default {
   border: 1px solid #D3C4D1;
   background-color: #F7E7F5;
   padding-bottom: 0px !important;
+ }
+ .pets-text-center{
+    text-align: center;
  }
 </style>
