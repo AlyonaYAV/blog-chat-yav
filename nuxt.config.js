@@ -45,7 +45,9 @@ export default {
     '@/plugins/element-ui',
     //There is no need server side rendering and render it only client side
     {src: '@/plugins/socket', ssr: false},
-    '@/plugins/eventBus'
+    // EventBus registration
+    '@/plugins/eventBus',
+    '@/plugins/axios-handler'
   ],
 
   /*
