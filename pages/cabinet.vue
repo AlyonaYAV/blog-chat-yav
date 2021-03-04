@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row v-if="!role">
+    <el-row v-if="role">
       <el-col :span="6">
         <div class="user-cabinet">
           <div class="user-cabinet__login">
