@@ -66,18 +66,41 @@ export default {
     },
     methods: {
       submitUserPassword(formName) {
-        this.$refs[formName].validate((valid) => {
+        this.$refs[formName].validate(async(valid) => {
           if (valid) {
-            console.log("submit! ", formName);
+            const userData = {
+              workPass: this.ruleForm.wpass,
+              pass: this.ruleForm.pass,
+              confirmedPass: this.ruleForm.checkPass
+            };
+            try{
+              const response = await this.$axios.put('/api/cabinet/user-password', userData);
+              if((response.status === 200) && response.data.passwordChanged){
+                this.$message({
+                  showClose: true,
+                  message: 'Your password has been successfully changed',
+                  type: 'success'
+                });
+                this.resetUserPassword(formName);
+              }else{
+                //if data is unexpactible
+                console.log("Test ",response.response);
+                //this.&store.comit('error/setError', response.response.data.message, {root: true});
+
+              }
+            }catch(e){
+              console.log("Test ",e);
+              this.$store.comit('error/setError', e, {root: true});
+            }
           } else {
-            console.log('error submit!!');
+            //console.log('error submit!!');
             return false;
           }
         });
       },
       resetUserPassword(formName) {
         this.$refs[formName].resetFields();
-        console.log("submit! ", formName);
+        //console.log("submit! ", formName);
       }
     }
 }
