@@ -43,6 +43,7 @@ export default {
         }
       };
       return {
+        countCommitError:0,
         ruleForm: {
           wpass: '',
           pass: '',
@@ -88,14 +89,21 @@ export default {
                 });
                 this.resetUserPassword(formName);
               }else{
-                //if data is unexpactible
-                console.log("Test ",response.response);
-                //this.&store.comit('error/setError', response.response.data.message, {root: true});
-
+                const resp = response.response;
+                if((resp.status === 400) && !resp.data.passwordChanged && (resp.data.message === "Match Bad")){
+                  ++this.countCommitError;
+                  if((this.countCommitError % 2) === 0){
+                    //Even
+                    this.$store.commit('error/setError', "You've put an invalid working password ", {root: true});
+                  }else{
+                    //Odd
+                    this.$store.commit('error/setError', "You've put an invalid working password", {root: true});
+                  }
+                  return;
+                }
               }
             }catch(e){
-              console.log("Test ",e);
-              this.$store.comit('error/setError', e, {root: true});
+              this.$store.commit('error/setError', e, {root: true});
             }
           } else {
             //console.log('error submit!!');
