@@ -2,17 +2,18 @@
   <div v-if="parentData">
     <div v-for="parentDataItem in parentData" :key="parentDataItem.id">
       <child-item v-if="parentDataItem.childrenItems.length !== 0" :child="parentDataItem"></child-item>
-      <el-menu-item v-else :index="'/pets_life/'+parentDataItem.id">
+      <el-menu-item v-else :index="'/pets_life/'+parentDataItem.reference">
         {{ parentDataItem.pageName }}
       </el-menu-item>
     </div>
   </div>
 </template>
+
 <script>
 import ChildItem from '@/components/site/navigation_recursion/ChildItem';
 export default {
   props:{ parentData: Array },
-  components: {
+  components:{
     ChildItem
   }
 }
