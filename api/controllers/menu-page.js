@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const { MenuPage, MenuPageContent } = require('./../helpers/db');
 const { validationResult } = require('express-validator');
 const { createPageItemIdV4, createReferenceV5 } = require('./../helpers/uuid');
@@ -23,23 +25,23 @@ async function getMenuPageContent(req, res){
     const reference = req.params.reference;
     const currentPageContent = await MenuPage.findOne({
       reference
-    }).populate('pageContent');
+     }).populate('pageContent');
     if(currentPageContent){
       const { title, pageHeader, singleImage, date } = currentPageContent.pageContent;
-      const newPageContent = { title, pageHeader, singleImage, date };
-    if(currentPageContent.pageContent.isBlockOne){
-      newPageContent.headerBlockOne = currentPageContent.pageContent.headerBlockOne;
-      newPageContent.contentBlockOne = currentPageContent.pageContent.contentBlockOne;
-    }
-    if(currentPageContent.pageContent.isBlockTwo){
-      newPageContent.headerBlockTwo = currentPageContent.pageContent.headerBlockTwo;
-      newPageContent.contentBlockTwo = currentPageContent.pageContent.contentBlockTwo;
-    }
-    if(currentPageContent.pageContent.isBlockThree){
-      newPageContent.headerBlockThree = currentPageContent.pageContent.headerBlockThree;
-      newPageContent.contentBlockThree = currentPageContent.pageContent.contentBlockThree;
-    }
-    return res.status(200).json({ message: "Ok", pageContent: newPageContent });
+      const newPageContent = { title,pageHeader,singleImage,date };
+      if(currentPageContent.pageContent.isBlockOne){
+        newPageContent.headerBlockOne = currentPageContent.pageContent.headerBlockOne;
+        newPageContent.contentBlockOne = currentPageContent.pageContent.contentBlockOne;
+      }
+      if(currentPageContent.pageContent.isBlockTwo){
+        newPageContent.headerBlockTwo = currentPageContent.pageContent.headerBlockTwo;
+        newPageContent.contentBlockTwo = currentPageContent.pageContent.contentBlockTwo;
+      }
+      if(currentPageContent.pageContent.isBlockThree){
+        newPageContent.headerBlockThree = currentPageContent.pageContent.headerBlockThree;
+        newPageContent.contentBlockThree = currentPageContent.pageContent.contentBlockThree;
+      }
+      return res.status(200).json({ message: "Ok", pageContent: newPageContent });
     }
     res.status(400).json({ message: "Can't get content", pageContent: null, error: e });
   }catch(e){
@@ -53,7 +55,7 @@ function createPage(req, res){
     let { pageName, pageHidden, parent, item, ...rest } = body;
       const id = createPageItemIdV4();
       const reference = createReferenceV5(parent, item);
-      // If an image is sent, its file name is checed
+      //If an image is sent, its file name is checked
       if(req.file){
         rest.singleImage = req.file.filename;
       }else{
@@ -92,13 +94,66 @@ async function getFullPageContent(req, res){
       return res.status(200).json({ message: "All content", fullContent: currentPageContent });
     }
   }catch(e){
-    res.status(400).json({ message: "Page dosen't exist", fullContent: null, error: e });
+    res.status(400).json({ message: "Page doesn't exist", fullContent: null, error: e });
   }
+}
+
+async function updatePage(req, res){
+  if(req.body.imageToDelete){
+    //Remove previous image by name 'imageToDelete'
+    removeFile(req.body.imageToDelete);
+  }
+  //Parse the JSON data from 'allData' field - it is an Object of all client data except image
+  let body = JSON.parse(req.body.allData);
+  let { pageName, pageHidden, ...rest } = body;
+  //Get 'id' of 'MenuPage' Model
+  const id = req.body.id;
+  //'singleImage' is undefined because it comes through the Multer
+  if(!req.body.singleImage){
+    //If an image is sent, its file name is checked
+    if(req.file){
+      rest.singleImage = req.file.filename;
+    }
+  }else{//'singleImage' has a name
+    rest.singleImage = req.body.singleImage
+  }
+  try{
+    //Update Models
+    const menuPageUpdated = await MenuPage.findOneAndUpdate(
+      { id: id },
+      { pageName, pageHidden },
+      { new: true }
+    );
+    const menuPageContentUpdated = await MenuPageContent.findOneAndUpdate(
+      { _id: menuPageUpdated.pageContent },
+      { ...rest },
+      { new: true }
+    );
+    return res.status(200).json({ message: "Page updated", updatedContent: { menuPageUpdated, menuPageContentUpdated, rest } });
+  }catch(e){
+    res.status(400).json({ message: "Page can't be updated", error: e });
+  }
+}
+
+// Private function for deleting files
+const removeFile = (file)=>{
+  let filePath = path.resolve(__dirname, '../..','static','pages_img',file);
+  //Remove uploaded file from 'temp' directory
+  if (!fs.existsSync(filePath)) {
+    console.log('The file does not exist');
+  }
+  //File will be removed
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error(err);
+    }
+  });
 }
 
 module.exports = {
   getMenuPages,
   getMenuPageContent,
   createPage,
-  getFullPageContent
+  getFullPageContent,
+  updatePage
 };
