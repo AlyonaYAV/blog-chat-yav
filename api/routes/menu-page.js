@@ -5,7 +5,7 @@ const authCabinetAdmin = passport.authenticate('jwt-cabinet-admin', {session: fa
 const validationParamPageContent = require('./../middleware/page-content');
 const upload = require('./../middleware/file-uploads');
 const uploadOptimized = require('./../middleware/file-uploads-optimized')
-const { getMenuPages, getMenuPageContent, createPage, getFullPageContent, updatePage } = require('./../controllers/menu-page');
+const { getMenuPages, getMenuPageContent, createPage, getFullPageContent, updatePage, deleteImage } = require('./../controllers/menu-page');
 
 // '/api/menu_page/page'
 router.get('/page', getMenuPages);
@@ -17,5 +17,7 @@ router.post('/create', authCabinetAdmin, upload.single('singleImage'), uploadOpt
 router.get('/full_page/:reference', validationParamPageContent(), getFullPageContent);
 // '/api/menu_page/update'
 router.put('/update', authCabinetAdmin, upload.single('singleImage'), uploadOptimized, updatePage);
+// '/api/menu_page/dalete/'
+router.patch('/delete/:collectionId/:imgName', authCabinetAdmin, deleteImage);
 
 module.exports = router;
