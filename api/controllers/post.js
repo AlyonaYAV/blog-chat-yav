@@ -6,14 +6,14 @@ module.exports.createPost = async (request, response) => {
     title: request.body.title,
     text: request.body.text,
     // Get the file path of an uploaded image by Multer
-    imageUrl: `${request.file.fileName}`
+    imageUrl: `${request.file.filename}`
   })
   try {
-    await post.save()
+    await post.save();
     // Data saved in DB
-    response.status(201).json(post)
+    response.status(201).json({ message: "New post created" });
   } catch (e) {
-    response.status(500).json(e)
+    response.status(500).json(e);
   }
 }
 
