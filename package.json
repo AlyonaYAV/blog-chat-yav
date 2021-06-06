@@ -24,6 +24,7 @@
     "element-ui": "^2.14.1",
     "express-validator": "^6.9.2",
     "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^3.1.2",
     "moment": "^2.29.1",
     "mongoose": "^5.11.9",
     "multer": "^1.4.2",
