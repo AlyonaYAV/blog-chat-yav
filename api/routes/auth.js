@@ -29,7 +29,7 @@ router.get('/admin/users', authCabinetAdmin, getAllUsers);
 router.post('/admin/user/ban/blog', authCabinetAdmin, setStatusBanBlog);
 // /api/auth/admin/user/ban/chat
 router.post('/admin/user/ban/chat', authCabinetAdmin, setStatusBanChat);
-// /api/auth/user/role
-router.get('/user/role', authCabinet, getRole);
+// /api/auth/user/role/:jwt
+router.get('/user/role/:jwt?', getRole);
 
 module.exports = router;
