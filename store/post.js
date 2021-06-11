@@ -19,7 +19,7 @@ export const actions = {
   async displayAdminPosts ({ commit }) {
     try{
       const  result = await this.$axios.get('/api/post/admin/posts');
-      if(result){
+      if(result.data){
         const { message, posts } = result.data;
         return posts;
       }
@@ -31,11 +31,16 @@ export const actions = {
     }
   },
   async editAdminPost ({ commit }, id) {
-    return await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(posts.find(p => p._id === id))
-      }, 3000)
-    })
+    try{
+      const result = await this.$axios.get(`/api/post/admin/post/${id}`);
+      if(result.data){
+        return result.data.post;
+      }
+    }catch(e){
+      commit('error/setError', e, { root: true })
+      // Block 'catch' will be called in create.vue file
+      throw e
+    }
   },
   async updateAdminPost ({ commit }, data) {
     await new Promise((resolve) => {
