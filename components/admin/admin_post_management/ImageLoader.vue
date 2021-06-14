@@ -1,0 +1,105 @@
+<template>
+  <div class="image-loader">
+    <el-upload
+      class="image-loader__single-image"
+      action="#"
+      :on-preview="handlePreview"
+      :on-remove="handleRemove"
+      :before-remove="beforeRemove"
+      :multiple="false"
+      :limit="1"
+      :on-change="handleChangeSingleImage"
+      :on-exceed="handleExceed"
+      :file-list="singleImage"
+      :on-success="handleSuccess"
+      ref="singleImage">
+        <el-button size="small" type="primary">Click to upload an image</el-button>
+        <div slot="tip" class="el-upload__tip">jpg/png files with a size less than 500kb</div>
+    </el-upload>
+    <image-preview v-if="imageLinkValue !== ''"
+      :key="imageLinkValue"
+      :imageLink="imageLinkValue"
+      :previewWarning="previewWarning"
+      :uploadedImgName="singleImage[0] && singleImage[0].name"
+    />
+  </div>
+</template>
+
+<script>
+import ImagePreview from './ImagePreview';
+export default {
+  props:{
+    imageLink: { type: String, default: '' },
+    oneDeleteSingleImage: { type: Function }
+  },
+  components: {
+    ImagePreview
+  },
+  data(){
+    return {
+      imageLinkValue: '',
+      singleImage:[],
+      previewWarning: false
+    }
+  },
+  watch:{
+    // copy and watch the 'props' value
+    imageLink(val){
+      this.imageLinkValue = val;
+    }
+  },
+  methods:{
+    //Single image
+    handleRemove(file, fileList) {
+      this.previewWarning = false;
+      // Function from parent component
+      this.oneDeleteSingleImage(true);
+    },
+    handlePreview(file) {
+      //console.log(file);
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(`The limit is 1, you selected ${files.length} files this time, add up to ${files.length + fileList.length} totally`);
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`Cancel the transfer of ${ file.name } ?`);
+    },
+    //Called when image is uploaded
+    handleSuccess(response, file, fileList){
+      this.previewWarning = true;
+    },
+    handleChangeSingleImage(file, fileList){
+      this.singleImage[0] = file.raw;
+      // Emit event with data up to the parent component
+      this.$emit('onSingleImage',{'singleImage': this.singleImage[0] });
+    },
+    // This function is called by 'ref' from the parent
+    clearUpload(){
+      this.$refs.singleImage.clearFiles();
+      this.previewWarning = false;
+    }
+    //End of the single image
+  },
+  created(){
+    this.imageLinkValue = this.imageLink;
+  }
+}
+</script>
+
+<style lang="scss">
+.image-loader__single-image{
+  padding:1% 2%;
+  border-radius: 10px;
+  background-color: #e6e6f6;
+  border: 1px solid #ccc;
+  .el-button.el-button--primary.el-button--small{
+      background-color:#cc6699;
+      border-color: violet;
+      color: #000;
+      &:hover{
+        background-color:#d381aa;
+        color:white;
+      }
+  }
+}
+</style>
