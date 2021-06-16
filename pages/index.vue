@@ -1,33 +1,22 @@
 <template>
-  <div>
-    <el-row type="flex" justify="center">
-      <el-col :xs="4" :sm="18" :md="12" :lg="10">
-        <blog-post v-for="post in 3" :key="post" />
-      </el-col>
-    </el-row>
-    {{ test }}
-    <hr>
-    <el-button type="success">
-      Success
-    </el-button>
-  </div>
+  <el-row type="flex" justify="center">
+    <el-col :xs="24" :sm="18" :md="12" :lg="10" :xl="24">
+      <blog-post v-for="post in posts" :key="post._id" :post="post" />
+    </el-col>
+  </el-row>
 </template>
 <script>
 import BlogPost from '@/components/site/Post'
 export default {
+  async asyncData({ store, $http }){
+    const posts = await store.dispatch('post/displayPosts');
+    return { posts };
+  },
   components: {
     BlogPost
   },
-  had: {
+  head: {
     title: 'Main pets page'
-  },
-  async asyncData ({ $http }) {
-    const test = await $http.$get('/api/test')
-    return {
-      test
-    }
-  },
-  methods: {
   }
 }
 </script>
