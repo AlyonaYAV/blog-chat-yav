@@ -1,7 +1,6 @@
 const { Router } = require('express');
 const passport = require('passport');
 const authCabinetAdmin = passport.authenticate('jwt-cabinet-admin', {session: false});
-const authCabinet = passport.authenticate('jwt-cabinet', {session: false});
 const loginUser = require('./../middleware/login-user');
 const userAdminCreation = require('./../middleware/user-admin-creation');
 const {
