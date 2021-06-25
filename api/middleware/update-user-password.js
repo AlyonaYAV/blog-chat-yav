@@ -12,7 +12,7 @@ module.exports = ()=>{
       return true;
     }),
     // password must be  at least 5 chars long
-    body('pass').isLenth({ min: 5, max: 12 }).withMessage('Characters from 5 to 12'),
+    body('pass').isLength({ min: 5, max: 12 }).withMessage('Characters from 5 to 12'),
     // password confirmation
     body('confirmedPass').custom( (value, { req })=>{
       if(value !== req.body.pass){
