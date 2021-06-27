@@ -20,6 +20,11 @@
           show-icon
           ></el-alert>
       </div>
+      <button
+          type="button"
+          @click="deleteAvatar"
+          class="avatar__delete"
+        >Delete avatar</button>
     </div>
     <div v-else class="avatar__icon">
       <i class="el-icon-user"></i>
@@ -34,7 +39,8 @@ export default {
   props:{
     imageLink: { type: String, default: '' },
     previewWarning: { type: Boolean, default: false },
-    uploadedImgName: { type: String, default: '' }
+    uploadedImgName: { type: String, default: '' },
+    onDeleteAvatar: { type: Function }
   },
   components:{
     Loader
@@ -53,6 +59,30 @@ export default {
         //this.$refs.img.src = `/posts_img/${this.imageLink}`;
         this.src = `/avatar/${this.imageLink}`;
       }.bind(this),2000);
+    },
+    async deleteAvatar(){
+      if(!this.imageLink) return;
+      try{
+        const result = await this.$axios.$delete('/api/cabinet/user-avatar/delete', {
+          data: { imageName: this.imageLink  }
+        });
+        // Avatar was erased
+        if(result.avatar === ''){
+          this.$message({
+            showClose: true,
+            message: "Avatar has been deleted",
+            type: 'success'
+          });
+          // This function placed in parent
+          this.onDeleteAvatar(result.avatar);
+        }
+      }catch(e){
+        this.$message({
+          showClose: true,
+          message: "Avatar couldn't be deleted",
+          type: 'error'
+        });
+      }
     }
   }
 }
@@ -64,6 +94,7 @@ export default {
   border:1px solid #e499c8;
   height: 125px;
   margin: 0.5em 0;
+  padding-bottom: 10px;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -106,6 +137,27 @@ export default {
   .image-loader__btn-delete{
     font-size: 0.9em;
     padding: 0.5em;
+  }
+  .avatar__delete{
+    height: 30px;
+    align-self: flex-end;
+    background-color: #cc6699;
+    border: 1px solid rgb(214, 50, 214);
+    color: #000;
+    border-radius: 10%;
+    padding: 5px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: .9em;
+    margin-top: 10px;
+    &:hover{
+      background-color: #ce76a2;
+      color: #fff;
+    }
+    &:disabled{
+      color: lighten($color: #6b1c43, $amount: 15);
+      background-color: #cc8fad;
+      cursor:initial;
+    }
   }
 }
 .avatar__icon{
