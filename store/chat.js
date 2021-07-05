@@ -6,7 +6,8 @@ export const state = () => ({
       title: '',
       text: ''
     },
-    users: []
+    users: [],
+    currentRoom: null
   })
   
   export const mutations = {
@@ -17,6 +18,10 @@ export const state = () => ({
       state.user = {}
       state.messages = []
       state.users = []
+      state.currentRoom = null
+    },
+    addCurrentRoom(state, room){
+      state.currentRoom = room;
     },
     SOCKET_systemMessage (state, syatemMessage) {
       state.systemMessage = syatemMessage
@@ -32,6 +37,7 @@ export const state = () => ({
       state.users = users
     }
   }
+
   /* export const actions = {
     SOCKET_newMessage (ctx, data) {
       console.log('Message receved', data)
