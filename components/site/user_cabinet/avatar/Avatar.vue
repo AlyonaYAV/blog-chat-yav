@@ -84,7 +84,6 @@ export default {
   },
   created(){
     this.imageLinkValue = this.imageLink;
-    console.log("Created ",this.imageLinkValue);
   }
 }
 </script>
