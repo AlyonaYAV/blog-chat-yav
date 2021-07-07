@@ -10,6 +10,10 @@
 
 <script>
 export default {
+  props: {
+    userId: { type: String, default: '' },
+    roomId: { type: Object }
+  },
   data () {
     return {
       formText: ''
@@ -19,8 +23,9 @@ export default {
     addMessage () {
       // console.log('Result is: ', this.formText)
       this.$socket.emit('createMessage', {
-        id: this.$store.state.chat.user.id,
-        name: 'admin',
+        userSocketId: this.$store.state.chat.user.userSocketId,
+        userId: this.userId,
+        roomId: this.roomId.id,
         text: this.formText
       }, (data) => {
         if (typeof data === 'string') {
