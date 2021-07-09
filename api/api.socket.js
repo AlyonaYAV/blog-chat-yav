@@ -64,7 +64,8 @@ io.on('connection', socket => {
         ChatMessage.create({
           text: data.text,
           user: data.userId,
-          room: data.roomId
+          room: data.roomId,
+          userName: user.name
         }, function (err, success){
           if(err){
             //console.log("Error ",err);
