@@ -63,7 +63,7 @@ export default {
   async asyncData(context){
     let jwt = context.store.getters['auth/isUserAuthenticated'].jwtToken;
     //'$isAllowedByRole' is a function from Plugin
-    const { role, sessionEnd } = await context.app.$isAllowedByRole(jwt);
+    const { role, sessionEnd, id } = await context.app.$isAllowedByRole(jwt);
     let access = false;
     if(role === 'guest' || role === 'moderator' || role === 'admin'){
       access = true;
@@ -83,13 +83,15 @@ export default {
       return {
         userLogoutRefresh: sessionEnd ? true : false,
         rooms: result.rooms,
-        tryAgainMessage: null
+        tryAgainMessage: null,
+        id
       };
     }else{//Axios 'jwt' access failed
       return {
         userLogoutRefresh: sessionEnd ? true : false,
         rooms: [],
-        tryAgainMessage: 'Get a list of rooms again'
+        tryAgainMessage: 'Get a list of rooms again',
+        id
       };
     }
   },
@@ -107,11 +109,11 @@ export default {
   },
   data(){
     return {
-      currentName: '',// User name
+      currentName: '',//User name
       snackbar: false,
-      currentRoomId: '',// Room id
-      currentRoom: '',// Room name
-      message: ''//Room descreption
+      currentRoomId:'',//Room id
+      currentRoom: '',//Room name
+      message: ''//Room description
     }
   },
   computed:{
@@ -136,14 +138,15 @@ export default {
       /* eslint-disable */
         const user = {
           name: this.currentName,
-          room: this.currentRoom
+          room: this.currentRoom,
+          userId: this.id
         }
         //
         this.addCurrentRoom({
-          id: this.currentRoomId,// Room id
-          name: this.currentRoom,// Room name
-          description: this.message// Room description
-        })
+          id: this.currentRoomId, //Room id
+          name: this.currentRoom, //Room name
+          description: this.message //Room description
+        });
         // Send data by socket to the server to get an unique ID of the user connection
         this.$socket.emit('userJoined', user, (data) => {
           // Server response if request was bad
@@ -152,7 +155,8 @@ export default {
           } else {
             // Good response
             // Sets the user id according to the socket
-            user.userSocketId = data.userSocketId
+            //user.userSocketId = data.userSocketId
+            user.userId = this.id;
             // Use mutation from Vuex
             this.addUser(user);
             // Redirect User to the Chat
@@ -178,7 +182,7 @@ export default {
             type: 'warning'
           });
         }else if(result === undefined){
-          this.tryAgainMessage = "Get a list of rooms again";
+          this.tryAgainMessage = 'Get a list of rooms again';
           this.$message({
             showClose: true,
             message: "Click to load the list of rooms",
@@ -186,9 +190,9 @@ export default {
           });
         }
       }catch(e){
-        // console.log("Error ",e.message);
+        //console.log("Error ",e.message);
       }
-    },
+    }
      /*,
     message () {
       // console.log('Ok')
