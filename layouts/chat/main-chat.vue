@@ -16,15 +16,12 @@
                         <v-list>
                             <v-list-item
                                 v-for="u in users"
-                                :key="u.id"
+                                :key="u.userId"
                                 @click.prevent=""
+                                :style="u.userId === user.userId ? {backgroundColor:'#ffd9fc'} : {backgroundColor:'#fff'}"
                             >
-                                <v-list-item-icon>
-                                    <v-icon v-if="u.icon" color="#F7E7F5">mdi-star</v-icon>
-                                </v-list-item-icon>
-
                                 <v-list-item-content>
-                                    <v-list-item-title v-if="u.name" v-text="u.name"></v-list-item-title>
+                                    <v-list-item-title v-text="u.name"></v-list-item-title>
                                 </v-list-item-content>
 
                                 <v-list-item-avatar>
@@ -32,7 +29,7 @@
                                 </v-list-item-avatar>
 
                                 <v-list-item-icon>
-                                    <v-icon :color="u.id === user.id ? 'pink' : 'grey'">mdi-comment-processing-outline</v-icon>
+                                    <v-icon :color="u.userId === user.userId ? '#b34591' : 'grey'">mdi-comment-processing-outline</v-icon>
                                 </v-list-item-icon>
                             </v-list-item>
                         </v-list>
@@ -146,9 +143,9 @@ export default {
   methods: {
     ...mapMutations('chat', ['clearData']),
     exit () {
-      this.$socket.emit('userLeft', this.user.id, () => {
+      this.$socket.emit('userLeft', this.user.userId, () => {
         // Use mutation to reset state.user
-        this.clearData()
+        //this.clearData()
         this.$router.push('/chat/?message=leftChat')
       })
     }
