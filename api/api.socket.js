@@ -12,24 +12,25 @@ io.on('connection', socket => {
   /* When the user first came (create new User) */
     // 1. dataUser - user Object; 2. callback - sends data to front-end
     socket.on('userJoined', (dataUser, callback) => {
-      // if validation is bad
+      // If validation is bad
       if (!dataUser.name || !dataUser.room) {
         // Sends to front-end
         return callback('Entered data is incorrect!')
       }
-      // Add User to a Room programmatically  (id Room)
+      // Add User to a Room programmatically (id Room)
       socket.join(dataUser.room)
-      // Add a user to the class Users but remove before
-      users.remove(socket.id)
+      // Add a user to the class Users
+      // Remove user id before adding to avoid duplications
+      users.remove(dataUser.userId)
       users.add({
-        socketId: socket.id,
+        userId: dataUser.userId,
         name: dataUser.name,
         room: dataUser.room
       })
       // If validation is good
       callback({
         // Socket ID is to define the User on the front-end
-        userSocketId: socket.id
+        userId: dataUser.userId
       })
       // Update list of all users in the room
       io.to(dataUser.room).emit('updateUsers', users.getByRoom(dataUser.room))
@@ -38,47 +39,47 @@ io.on('connection', socket => {
         title: '-- New guest --',
         text: `Welcome to the chat ${dataUser.name}`
       })
-      // Notify all the Users ecxept of the currennt that the User has joined the chat
+      // Notify all the Usres except of the current that the User has joined the chat
       socket.broadcast.to(dataUser.room).emit('systemMessage',{
         title: '-- New guest has joined --',
         text: `User ${dataUser.name} has joined to the chat`
       })
     })
-    // Create a new chat event and send a message to all users in the room
+    // Create a new chat event and send a message to all the users in the room
     // and even for the current user.
     socket.on('createMessage', (data, callback)=>{
       if (!data.text) {
         return callback('A message can\'t be empty')
       }
       //
-      const user = users.get(data.userSocketId)
-      if (user) {
-        // to( 'room number' ) - wich room a message is being sent to
-        // Event for all users in a specific room
-        io.to(user.room).emit('newMessage', {
-          userSocketId: data.userSocketId,
-          name: user.name,
-          text: data.text
-        })
-        // Save current message into the DB
+      const currentUser = users.get(data.userId)
+      if (currentUser) {
+        //Save current message into the DB
         ChatMessage.create({
           text: data.text,
           user: data.userId,
           room: data.roomId,
-          userName: user.name
-        }, function (err, success){
+          userName: currentUser.name,
+          avatar: data.avatar,
+          role: data.role
+        }, function (err,success) {
           if(err){
-            //console.log("Error ",err);
-          }else{
-            //console.log("Success ",success);
-          }
+              //console.log("Error ",err);
+            }else{
+              const { _id, userName: name, user, room, date, text, inset, divider, avatar, role } = success;
+                //name = data.role === 'admin' ? `${name} (admin) ` : name;
+              const newMessage = { _id, name, user, room, date, text, inset, divider, avatar, role };
+              // to( 'room number' ) - which room a message is being sent to.
+              // Event for all users in a specific room
+              io.to(currentUser.room).emit('newMessage', newMessage);
+            }
         });
         // Call the callback() to clean the form text field
         callback()
       }
     })
     // User left the chat
-    socket.on('userLeft', (userId, callback) =>{
+    socket.on('userLeft', (userId, callback) => {
       const user = users.remove(userId)
       if (user) {
         // Update list of all users in the room
@@ -91,8 +92,9 @@ io.on('connection', socket => {
       callback()
     })
     // User closed the chat window
-    socket.on('disconnect', () =>{
-      const user = users.remove(socket.id)
+    socket.on('disconnect', () => {
+      //const user = users.remove(socket.id)
+      const user = users.remove()
       if (user) {
         // Update list of all users in the room
         io.to(user.room).emit('updateUsers', users.getByRoom(user.room))
