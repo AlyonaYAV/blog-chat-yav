@@ -1,4 +1,5 @@
 class Users {
+  users
   constructor () {
     this.users = []
   }
@@ -8,7 +9,8 @@ class Users {
   }
 
   get (id) {
-    return this.users.find( (user) => user.socketId === id )
+    //return this.users.find( (user) => user.socketId === id )
+    return this.users.find( (user) => user.userId === id )
   }
 
   remove (id) {
@@ -16,9 +18,10 @@ class Users {
     // If 'user' exists remove it
     if (user) {
       // Remove user if its 'id' isn't equal to 'id'
-      this.users = this.users.filter( (user) => user.socketId !== id )
+      //this.users = this.users.filter( (user) => user.socketId !== id )
+      this.users = this.users.filter( (user) => user.userId !== id )
     }
-    // Returne deleted 'user'
+    // Return deleted 'user'
     return user
   }
 
