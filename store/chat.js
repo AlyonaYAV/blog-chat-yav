@@ -6,11 +6,11 @@ export const state = () => ({
       title: '',
       text: ''
     },
-    // users - [{socketId: socket.id, name: userName, room: currentRoom}, {}, ...]
-    users: [], // Array of all object users in the current room
+    //users - [{socketId: socket.id, name: userName, room: currentRoom}, {}, ...]
+    users: [], // Array of all object users in the current room.
     currentRoom: null // Name of the current room
   })
-  
+
   export const mutations = {
     addUser (state, user) {
       state.user = user
@@ -24,13 +24,11 @@ export const state = () => ({
     addCurrentRoom(state, room){
       state.currentRoom = room;
     },
-    SOCKET_systemMessage (state, syatemMessage) {
-      state.systemMessage = syatemMessage
+    SOCKET_systemMessage (state, systemMessage) {
+      state.systemMessage = systemMessage
     },
     // It will be called automatically by installed package 'vue-socket.io'
     SOCKET_newMessage (state, message) {
-      message.divider = true
-      message.inset = true
       state.messages.push(message)
     },
     SOCKET_updateUsers (state, users) {
@@ -39,8 +37,8 @@ export const state = () => ({
   }
 
   /* export const actions = {
+    // It will be called automatically by installed package 'vue-socket.io'
     SOCKET_newMessage (ctx, data) {
-      console.log('Message receved', data)
+      console.log('Message recieved ', data)
     }
   } */
-  
