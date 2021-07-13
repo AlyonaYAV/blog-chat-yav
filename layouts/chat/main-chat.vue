@@ -14,9 +14,9 @@
                             All people in the chat room
                         </v-alert>
                         <v-list>
+                            <div v-for="u in users" :key="u.userId">
                             <v-list-item
-                                v-for="u in users"
-                                :key="u.userId"
+                                v-if="u.room === user.room"
                                 @click.prevent=""
                                 :style="u.userId === user.userId ? {backgroundColor:'#ffd9fc'} : {backgroundColor:'#fff'}"
                             >
@@ -32,6 +32,7 @@
                                     <v-icon :color="u.userId === user.userId ? '#b34591' : 'grey'">mdi-comment-processing-outline</v-icon>
                                 </v-list-item-icon>
                             </v-list-item>
+                            </div>
                         </v-list>
                     </v-navigation-drawer>
                 </v-col>

@@ -17,6 +17,24 @@ io.on('connection', socket => {
         // Sends to front-end
         return callback('Entered data is incorrect!')
       }
+      //Before the user join to a room
+      const doesUserLeftRoom = users.users.find((el, ind, arr)=>{
+        if(dataUser.userId === el.userId && el.room !== dataUser.room){
+          return true;
+        }
+      })
+      // Disconnect the user from another room
+      if(doesUserLeftRoom){
+        const { name, room, userId } = doesUserLeftRoom;
+        // Remove user from users array
+        users.remove(userId);
+        // Update list of all users in the room
+        io.to(room).emit('updateUsers', users.users)// users.getByRoom(dataUser.room))
+        io.to(room).emit('systemMessage',{
+          title: '-- User left --',
+          text: `User ${name} left the chat`
+        })
+      }
       // Add User to a Room programmatically (id Room)
       socket.join(dataUser.room)
       // Add a user to the class Users
@@ -33,7 +51,7 @@ io.on('connection', socket => {
         userId: dataUser.userId
       })
       // Update list of all users in the room
-      io.to(dataUser.room).emit('updateUsers', users.getByRoom(dataUser.room))
+      io.to(dataUser.room).emit('updateUsers', users.users)// users.getByRoom(dataUser.room))
       // System message
       socket.emit('systemMessage',{
         title: '-- New guest --',
@@ -83,7 +101,7 @@ io.on('connection', socket => {
       const user = users.remove(userId)
       if (user) {
         // Update list of all users in the room
-        io.to(user.room).emit('updateUsers', users.getByRoom(user.room))
+        io.to(user.room).emit('updateUsers', users.users)// users.getByRoom(dataUser.room))
         io.to(user.room).emit('systemMessage',{
           title: '-- User left --',
           text: `User ${user.name} left the chat`
