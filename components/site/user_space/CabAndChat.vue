@@ -12,16 +12,20 @@
           text-color="#fff"
       >
         <el-menu-item index="/cabinet" class="pats-item__cabinet el-icon-user-solid"></el-menu-item>
-        <el-menu-item index="/chat" class="pets-item-chat">Chat</el-menu-item>
+        <el-menu-item v-if="!isUserAuthenticated.chatBan" index="/chat" class="pets-item-chat">Chat</el-menu-item>
+        <el-menu-item v-else index="#" class="pets-item-chat-denied">Chat access denied</el-menu-item>
         <el-menu-item class="pets-item__log-out" @click.native="userLogOutHandler">Log out</el-menu-item>
       </el-menu>
     </div>
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
 export default {
   props: { userLogin: String },
+  computed: {
+    ...mapGetters('auth', ['isUserAuthenticated'])
+  },
   methods: {
     userLogOutHandler(){
       this.userLogOutMethod();
@@ -76,6 +80,12 @@ export default {
 .pets-item-chat{
   width: 43%;
   @extend %item-cab-chat;
+}
+.pets-item-chat-denied{
+  width: 43%;
+  @extend %item-cab-chat;
+  font-size: 13px;
+  color: #fff!important;
 }
 .pets-item__log-out{
   width: 34%;
