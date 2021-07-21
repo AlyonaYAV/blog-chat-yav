@@ -6,7 +6,16 @@ const httpServer = require('http').createServer(app)
 const io = require('socket.io')(httpServer)
 //
 const users = require('./Users')()
-const { ChatMessage } = require('./helpers/db');
+const { User, ChatMessage } = require('./helpers/db');
+
+const userPresenceInChat = async (id, isInChat)=>{
+  //If user is in chat - true, if he left chat - false
+  try{
+    await User.findByIdAndUpdate(id, { inChat: isInChat });
+  }catch(e){
+    console.log(e);
+  }
+}
 
 io.on('connection', socket => {
   /* When the user first came (create new User) */
@@ -19,27 +28,27 @@ io.on('connection', socket => {
       }
       //Before the user join to a room
       const doesUserLeftRoom = users.users.find((el, ind, arr)=>{
-        if(dataUser.userId === el.userId && el.room !== dataUser.room){
+        if(dataUser.userId === el.userId && el.room !== dataUser.room) {
           return true;
         }
       })
-      // Disconnect the user from another room
+      //Disconnect the user from another room
       if(doesUserLeftRoom){
         const { name, room, userId } = doesUserLeftRoom;
-        // Remove user from users array
+        //Remove user from users array
         users.remove(userId);
         // Update list of all users in the room
-        io.to(room).emit('updateUsers', users.users)// users.getByRoom(dataUser.room))
+        io.to(room).emit('updateUsers', users.users) //users.getByRoom(room));
         io.to(room).emit('systemMessage',{
           title: '-- User left --',
           text: `User ${name} left the chat`
-        })
+        });
       }
       // Add User to a Room programmatically (id Room)
       socket.join(dataUser.room)
-      // Add a user to the class Users
-      // Remove user id before adding to avoid duplications
+      //Remove user id before adding to avoid duplications
       users.remove(dataUser.userId)
+      // Add a user to the class Users
       users.add({
         userId: dataUser.userId,
         name: dataUser.name,
@@ -52,17 +61,20 @@ io.on('connection', socket => {
         userId: dataUser.userId
       })
       // Update list of all users in the room
-      io.to(dataUser.room).emit('updateUsers', users.users)// users.getByRoom(dataUser.room))
+      io.to(dataUser.room).emit('updateUsers', users.users) //users.getByRoom(dataUser.room))
       // System message
       socket.emit('systemMessage',{
         title: '-- New guest --',
         text: `Welcome to the chat ${dataUser.name}`
       })
       // Notify all the Usres except of the current that the User has joined the chat
-      socket.broadcast.to(dataUser.room).emit('systemMessage',{
+      //socket.broadcast.to(dataUser.room).emit('systemMessage',{
+      io.to(dataUser.room).emit('systemMessage',{
         title: '-- New guest has joined --',
         text: `User ${dataUser.name} has joined to the chat`
       })
+      //Update 'inChat' user property in DB
+      userPresenceInChat(dataUser.userId, true);
     })
     // Create a new chat event and send a message to all the users in the room
     // and even for the current user.
@@ -102,17 +114,19 @@ io.on('connection', socket => {
       const user = users.remove(userId)
       if (user) {
         // Update list of all users in the room
-        io.to(user.room).emit('updateUsers', users.users)// users.getByRoom(dataUser.room))
+        io.to(user.room).emit('updateUsers',users.users) //users.getByRoom(dataUser.room))
         io.to(user.room).emit('systemMessage',{
           title: '-- User left --',
           text: `User ${user.name} left the chat`
         })
       }
       callback()
+      //Update 'inChat' user property in DB
+      userPresenceInChat(userId, false);
     })
     // User closed the chat window
     socket.on('disconnect', () => {
-      // Remove current user from the chat when he close browser tab or window
+      //Remove current user from the chat when he close browser tab or window
       const user = users.removeBySocketId(socket.id);
       if (user) {
         // Update list of all users in the room
@@ -121,9 +135,11 @@ io.on('connection', socket => {
           title: '-- User left --',
           text: `User ${user.name} left the chat`
         })
+        //Update 'inChat' user property in DB
+        userPresenceInChat(user.userId, false);
       }
     })
-    // Chat ban by Admin or Moderator
+    //Chat ban by Admin or Moderator
     socket.on('userChatBan', (dataUser, callback) => {
       if(!dataUser.id){
         // Sends to front-end
@@ -134,21 +150,24 @@ io.on('connection', socket => {
         // Socket ID is to define the User on the front-end
         id: dataUser.id
       })
-      // If user in the chat then ban him
+      //If user in the chat then ban him
       const userObj = users.get(dataUser.id);
       if(userObj){
         //
         const user = users.remove(dataUser.id);
         // Update list of all users in the room
-        io.to(user.room).emit('updateUsers',users.users) // users.getByRoom(dataUser.room)
-        io.to(user.room).emit('systemMessage', {
+        io.to(user.room).emit('updateUsers',users.users) //users.getByRoom(dataUser.room))
+        io.to(user.room).emit('systemMessage',{
           title: '-- User left --',
           text: `User ${user.name} has been banned in the chat`
         });
-        // Ban state in the specified room
+        //Ban state in the specified room
         io.to(userObj.room).emit('userChatBanState', dataUser);
-      } 
-    })
+      }
+      //Update 'inChat' user property in DB
+      userPresenceInChat(dataUser.id, false);
+    });
+
 })
 
 module.exports = {
