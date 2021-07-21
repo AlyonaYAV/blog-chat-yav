@@ -4,8 +4,8 @@ export default {
   ** Nuxt rendering mode
   ** See https://nuxtjs.org/api/configuration-mode
   */
-  //mode: 'universal', // It's deprecated use ssr instead
-  ssr: true, //default value
+  //mode: 'universal', // It's deprecated, use ssr instead
+  ssr: true, // default value
 
   /*
   ** Nuxt target
@@ -43,13 +43,14 @@ export default {
   */
   plugins: [
     '@/plugins/element-ui',
-    //There is no need server side rendering and render it only client side
-    {src: '@/plugins/socket', ssr: false},
+    // There is no need server side rendering and render it only on client side
+    { src: '@/plugins/socket', ssr: false },
     // EventBus registration
     '@/plugins/eventBus',
     '@/plugins/axios-handler',
-    { src: '@/plugins/pages-menu-recursive', mode: 'client' },
-    { src: '~/plugins/user-role' }
+    { src: '@/plugins/pages-menu-recursive', mode: 'client'  },
+    { src: '~/plugins/user-role' },
+    { src: '~/plugins/admin-settings' }
   ],
 
   /*
@@ -64,7 +65,7 @@ export default {
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
     // '@nuxtjs/eslint-module',
-    '@nuxtjs/vuetify',
+    "@nuxtjs/vuetify",
   ],
 
   /*
@@ -84,13 +85,13 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/markdownit'
   ],
-  
+
   /*
   ** Axios Nuxt.js
   */
- axios: {
-   // proxyHeaders: false
- },
+  axios: {
+    // proxyHeaders: false
+  },
 
   /*
   ** Mark Down Nuxt.js
@@ -109,9 +110,9 @@ export default {
   /*
   ** Server Middleware
   */
-  serverMiddleware: {
-    '/api': '~/api'
-  },
+  serverMiddleware: [
+    { path: '/api', handler: '~/api' }
+  ],
 
   /*
   ** Build configuration
