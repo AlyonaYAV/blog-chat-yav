@@ -4,6 +4,7 @@
             router
             :default-active="$route.path"
             class="el-menu-pets"
+            :style="{ backgroundImage: siteLogo ? `url(/logo/${siteLogo})`: '' }"
             mode="horizontal"
             background-color="#cc6699"
             text-color="#f7edf2"
@@ -38,7 +39,8 @@ import { mapState } from 'vuex';
       return {
         activeIndex1: '2',
         isAuth: false,
-        createdPagesStructure: null
+        createdPagesStructure: null,
+        siteLogo: ''
       };
     },
     computed: {
@@ -68,6 +70,16 @@ import { mapState } from 'vuex';
         }catch(e){
           throw e;
         }
+      },
+      async getSiteLogo(){
+        try{
+          const result = await this.$axios.$get('/api/settings/logo');
+          if(result){
+            return result.logo;
+          }
+        }catch(e){
+          throw e;
+        }
       }
     },
     created(){
@@ -90,7 +102,14 @@ import { mapState } from 'vuex';
         //The 'createNestedMenuStucture' function is taken from 'plugin'
         this.createdPagesStructure = this.createNestedMenuStructure(data);
       }).catch(e =>{
-        console.log(e);
+        //console.log(e);
+      });
+      //Get site logo
+      this.getSiteLogo().then(data =>{
+        //Set the site logo
+        this.siteLogo =  data;
+      }).catch(e => {
+        //console.log(e);
       });
     }
   }
@@ -104,7 +123,8 @@ import { mapState } from 'vuex';
   }
   $menu-height: 70px;
   .el-menu-pets{
-    background: #cc6699 url("/paws.png") 0 0/140px 70px no-repeat padding-box border-box scroll !important;
+    /*url("/paws.png")*/
+    background: #cc6699 0 0/140px 70px no-repeat padding-box border-box scroll;
     height: $menu-height;
     width: 80%;
     float: left;
