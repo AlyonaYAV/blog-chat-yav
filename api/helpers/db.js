@@ -8,6 +8,7 @@ const Post = require('./../models/post');
 const Comment = require('./../models/comment');
 const ChatRoom = require('./../models/chat-room');
 const ChatMessage = require('./../models/chat-message');
+const SiteSettings = require('./../models/site-settings');
 // Config keys
 const keys = require('./../config/keys');
 
@@ -25,20 +26,21 @@ function connectDB(){
   .catch((error) => console.log('MongoDB error ', error))
 }
 
-// The function to check existing ID
+//The function to check existing ID
 function isValidId(id) {
   return mongoose.Types.ObjectId.isValid(id);
 }
 
 module.exports = {
-  connectDB, // Make a DB connection
-  User: User,
-  JwtRefresh: JwtRefresh,
-  MenuPage: MenuPage,
-  MenuPageContent: MenuPageContent,
+  connectDB, //Make a DB connection
+  User,
+  JwtRefresh,
+  MenuPage,
+  MenuPageContent,
   Post,
   Comment,
   ChatRoom,
   ChatMessage,
+  SiteSettings,
   isValidId
 };
