@@ -1,4 +1,5 @@
 <template>
+  <div :class="!loading ? '' : 'form-block'">
     <el-form
       ref="form"
       :model="ruleForm"
@@ -18,11 +19,13 @@
               native-type="submit"
               plain
               :loading="loading"
+              :disabled="loading"
             >
               Enter
             </el-button>
         </el-form-item>
     </el-form>
+  </div>
 </template>
 
 <script>
@@ -61,7 +64,6 @@ export default {
             await this.$store.dispatch('auth/login', formData);
             // If data is ok go to the admin page
             // this.$router.push('/admin')
-            this.loading = false;
             this.ruleForm.email = '';
             this.ruleForm.pass = '';
             // this.$message.success('User logged in');
@@ -72,6 +74,7 @@ export default {
             });
             window.setTimeout(()=>{
               this.$nuxt.$router.replace({ path: '/cabinet' });
+              this.loading = false;
             },2000);
           } catch (e) {
             this.loading = false;
@@ -104,6 +107,22 @@ export default {
   &:hover{
     background-color: #fa8fe1 !important;
     color: #fff;
+  }
+}
+.form-block{
+  position: relative;
+  &:after{
+    content: '';
+    display: block;
+    position: absolute;
+    top: -5%;
+    left: -5%;
+    width: 110%;
+    height: 110%;
+    background-color: rgba(204, 102, 153, 0.3);
+    z-index: 101;
+    border: 2px solid #cc6699;
+    border-radius: 5px;
   }
 }
 </style>
