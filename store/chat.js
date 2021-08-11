@@ -8,7 +8,8 @@ export const state = () => ({
     },
     //users - [{socketId: socket.id, name: userName, room: currentRoom}, {}, ...]
     users: [], // Array of all object users in the current room.
-    currentRoom: null // Name of the current room
+    currentRoom: null, // Name of the current room
+    usersInRooms: []
   })
 
   export const mutations = {
@@ -36,15 +37,21 @@ export const state = () => ({
     },
     resetUser(state){
       state.user = {};
+    },
+    SOCKET_userJoinedToRooms(state, usersInRooms){
+      state.usersInRooms = usersInRooms;
+    },
+    SOCKET_userLeftToRooms(state, usersInRooms){
+      state.usersInRooms = usersInRooms;
     }
   }
 
   export const actions = {
     SOCKET_userChatBanState({ commit, state }, data){
-      // If the user if in state is equal to the incoming id
+      //If the user id in state is equal to the incoming id
       if(data.id === state.user.userId){
         commit('resetUser');
-        commit('auth/updateChatBan',data.banState, {root: true});
+        commit('auth/updateChatBan',data.banState ,{root: true});
         this.$router.push('/');
       }
     }
