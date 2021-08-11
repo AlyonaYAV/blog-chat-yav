@@ -34,6 +34,9 @@
           <div v-if="user.inChat">
             <span class="in-chat__in">User is chatting</span>
             <i class="el-icon-chat-dot-round"></i>
+		      	<span v-if="user.chatRoom !== ''">
+              User in the room: {{ user.chatRoom }}
+            </span>
           </div>
           <div v-else>
             <span class="in-chat__out">User is not chatting</span>
@@ -63,25 +66,65 @@
 </template>
 
 <script>
-import Loader from '~/components/Loader';
+import { mapState } from 'vuex';
+import Loader from './../../Loader';
 import UserStateBan from './AdminUserListBan';
 export default {
   components: { Loader, UserStateBan },
-    props: {
-      "users": { type: Array, default: [] },
-      "userId": { type: String, default: '' }
+  props: {
+    "users": { type: Array, default: [] },
+    "userId": { type: String, default: '' }
+  },
+  computed:{
+    ...mapState('chat',{
+        usersInRooms: (state)=>{ return state.usersInRooms; }
+      })
+  },
+  watch:{
+    usersInRooms(chatUsers){
+      //Rewrite user's state in the chat and room name
+      this.displayChatUserState(chatUsers);
+    }
+  },
+  data() {
+    return {
+      activeName: '1'
+    };
+  },
+  methods: {
+    handleChange(val) {
+      //console.log(val);
     },
-    data() {
-      return {
-        activeName: '1'
-      };
-    },
-    methods: {
-      handleChange(val) {
-        //console.log(val);
+    displayChatUserState(usersInChat){
+      if(usersInChat.length > 0){
+        // Reset 'inChat' and 'chatRoom' by default
+        for(let i = 0;i < this.users.length; i++){
+          this.users[i] = {...this.users[i], inChat: false, chatRoom: ''};
+        }
+        // Looking in the 'users' list those who are in the chat
+        for(let i = 0;i < this.users.length; i++){
+          for(let j = 0;j < usersInChat.length; j++){
+            let obj = null;
+            //Find a user from chat
+            if(this.users[i].id === usersInChat[j].userId){
+              obj = { ...this.users[i], inChat: true, chatRoom: usersInChat[j].room };
+            }else{
+              obj = { ...this.users[i] };
+            }
+            this.users[i] = obj;
+          }
+        }
+      }else{
+        //If no one user is in the chat
+        for(let i = 0;i < this.users.length; i++){
+          this.users[i] = { ...this.users[i], inChat: false, chatRoom: '' };
+        }
       }
+      // Update template by force
+      this.$forceUpdate();
     }
   }
+}
 </script>
 
 <style lang="scss">
