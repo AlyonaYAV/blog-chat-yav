@@ -8,7 +8,7 @@
       <el-form-item label="Room description" prop="description">
         <el-input type="textarea" v-model="ruleForm.description" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item>
+      <el-form-item class="room-buttons">
         <el-button :loading="loading" :disabled="loading"
           type="primary" @click="submitForm('ruleForm')">
           Submit
@@ -135,6 +135,28 @@ export default {
     }
     .el-form-item__content{
       margin-left: 175px!important;
+    }
+  }
+  .room-buttons{
+    .el-form-item__content{
+      .el-button:nth-child(1){
+        background-color: #cc6699;
+        border-color: violet;
+        color: #000;
+        &:hover{
+          background-color: #d381aa;
+          color: white;
+        }
+      }
+      .el-button:nth-child(2){
+        background-color: #f5cae0;
+        border-color: #f3d3f3;
+        color: #000;
+        &:hover{
+          background-color: #e2a8c5;
+          color: white;
+        }
+      }
     }
   }
 }
