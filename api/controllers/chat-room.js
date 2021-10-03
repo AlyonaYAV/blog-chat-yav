@@ -174,7 +174,7 @@ async function getAllRoomsWithChatMessages(req, res){
 
 async function deleteChatMessage(req, res){
   const { messageId } = req.body;
-  if(!messageId) return res.status(400).json({ message: "Room has been deleted", deleted: result });
+  if(!messageId) return res.status(400).json({ message: "Room is absent", deleted: false });
   try{
     const result = await chatMessage.findByIdAndDelete(messageId);
     return res.status(204).json({ message: "Room has been deleted", deleted: result });
