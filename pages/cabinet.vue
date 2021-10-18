@@ -23,7 +23,7 @@
             <avatar :imageLink="avatar" />
           </el-tab-pane>
           <el-tab-pane label="Blog statistics" name="blog">
-            Blog statistics
+            <posts-with-comments-list ref="postsComments" />
           </el-tab-pane>
           <el-tab-pane label="Chat statistics" name="chat">
             <rooms-with-messages-list ref="roomsMessages" />
@@ -56,6 +56,7 @@ import  ChangeUserName from './../components/site/user_cabinet/ChangeUserName';
 import CangeUsserPassword from './../components/site/user_cabinet/ChangeUserPassword';
 import Avatar from '../components/site/user_cabinet/avatar/Avatar.vue';
 import RoomsWithMessagesList from '../components/site/user_cabinet/RoomsWithMessagesList.vue';
+import PostsWithCommentsList from '../components/site/user_cabinet/PostsWithCommentsList.vue';
 export default {
   async asyncData ({ store, app, redirect }) {
     let jwt = store.getters['auth/isUserAuthenticated'].jwtToken;
@@ -84,11 +85,11 @@ export default {
     ChangeUserName,
     CangeUsserPassword,
     Avatar,
-    RoomsWithMessagesList
+    RoomsWithMessagesList,
+    PostsWithCommentsList
   },
   data() {
     return {
-      result: '',
       activeName: 'userInfo'
     };
   },
@@ -97,11 +98,11 @@ export default {
   },
   methods: {
     ...mapMutations('auth', ['updateChatBan']),
-    async testing(){
-      const res = await this.$axios.$get('/api/cabinet/test');
-      this.result = res
-    },
     handleTabs(tab, event){
+      if(tab.name === 'blog'){
+        // Calling child component method with 'ref'
+        this.$refs.postsComments.getAllPostsWithComments();
+      }
       if(tab.name === 'chat'){
         // Calling child component method with 'ref'
         this.$refs.roomsMessages.getAllRoomsWithMessages();
