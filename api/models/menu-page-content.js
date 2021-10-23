@@ -10,7 +10,11 @@ const MenuPageContentSchema = new Schema({
   headerBlockThree: { type: String, default: undefined },
   contentBlockThree: { type: String, default: undefined },
   singleImage: String,
-  date: { type: Date, default: Date.now  }
+  date: { type: Date, default: Date.now  },
+  views: { type: Number, default: 0 },
+  likes: [
+    { type: Schema.Types.ObjectId, ref: 'User' }
+  ]
 });
 MenuPageContentSchema.virtual('isBlockOne').get(function () {
   if(this.headerBlockOne && this.contentBlockOne){
