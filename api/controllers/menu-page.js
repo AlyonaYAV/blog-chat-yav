@@ -4,7 +4,7 @@ const { MenuPage, MenuPageContent } = require('./../helpers/db');
 const { validationResult } = require('express-validator');
 const { createPageItemIdV4, createReferenceV5 } = require('./../helpers/uuid');
 
-async function getMenuPages(req, res){
+async function getMenuPages(req, res){ 
   try{
     const allPages = await MenuPage.find({});//.populate('pageContent');
     if(allPages){
@@ -27,8 +27,8 @@ async function getMenuPageContent(req, res){
       reference
      }).populate('pageContent');
     if(currentPageContent){
-      const { title, pageHeader, singleImage, date } = currentPageContent.pageContent;
-      const newPageContent = { title,pageHeader,singleImage,date };
+      const { title, pageHeader, singleImage, date, views, likes } = currentPageContent.pageContent;
+      const newPageContent = { title,pageHeader,singleImage,date,views,likes };
       if(currentPageContent.pageContent.isBlockOne){
         newPageContent.headerBlockOne = currentPageContent.pageContent.headerBlockOne;
         newPageContent.contentBlockOne = currentPageContent.pageContent.contentBlockOne;
@@ -216,6 +216,26 @@ const removeFile = (file)=>{
   });
 }
 
+async function addViewToPage(req, res){
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  let { reference, views } = req.params;
+  try {
+    const currentPage = await MenuPage.findOne({ reference });
+    const viewAddedToPage = await MenuPageContent.findOneAndUpdate({
+      _id: currentPage.pageContent
+    },{ views: ++views }, { new: true });
+    //
+    if(viewAddedToPage){
+      return res.status(200).json({ message: "Amount of views", views: viewAddedToPage.views });
+    }
+  }catch(e){
+    res.status(500).json(e);
+  }
+}
+
 module.exports = {
   getMenuPages,
   getMenuPageContent,
@@ -223,5 +243,6 @@ module.exports = {
   getFullPageContent,
   updatePage,
   deleteImage,
-  deletePageData
+  deletePageData,
+  addViewToPage
 };
