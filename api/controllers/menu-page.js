@@ -1,10 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-const { MenuPage, MenuPageContent } = require('./../helpers/db');
+const jwtDecode = require('jwt-decode');
+const { MenuPage, MenuPageContent, isValidId } = require('./../helpers/db');
 const { validationResult } = require('express-validator');
 const { createPageItemIdV4, createReferenceV5 } = require('./../helpers/uuid');
 
-async function getMenuPages(req, res){ 
+async function getMenuPages(req, res){
   try{
     const allPages = await MenuPage.find({});//.populate('pageContent');
     if(allPages){
@@ -28,7 +29,29 @@ async function getMenuPageContent(req, res){
      }).populate('pageContent');
     if(currentPageContent){
       const { title, pageHeader, singleImage, date, views, likes } = currentPageContent.pageContent;
-      const newPageContent = { title,pageHeader,singleImage,date,views,likes };
+      // We send 'likeState' to the client as response
+      let likeState = true;
+      //User authenticated
+      if(req.params.jwt !== undefined){
+        let jwtDecoded = jwtDecode(req.params.jwt) || {};
+        //Difine current time
+        const currentTime = new Date().getTime() / 1000;
+        const expired = jwtDecoded.exp || 0;
+        //Access Token is valid
+        if(currentTime < expired){
+          let userId = jwtDecoded.id;
+          //Check is the page liked
+          const index = likes.findIndex(id => {
+            return String(id) === String(userId);
+          });
+          //If a person has not liked the post yet
+          if(index === -1){
+            //The page is not liked
+            likeState = false;
+          }
+        }
+      }
+      const newPageContent = { title,pageHeader,singleImage,date,views,likes,likeState };
       if(currentPageContent.pageContent.isBlockOne){
         newPageContent.headerBlockOne = currentPageContent.pageContent.headerBlockOne;
         newPageContent.contentBlockOne = currentPageContent.pageContent.contentBlockOne;
@@ -129,7 +152,7 @@ async function updatePage(req, res){
       { ...rest },
       { new: true }
     );
-    return res.status(200).json({ message: "Page updated", imageName:  menuPageContentUpdated.singleImage });
+    return res.status(200).json({ message: "Page updated", imageName: menuPageContentUpdated.singleImage });
   }catch(e){
     res.status(400).json({ message: "Page can't be updated", error: e });
   }
@@ -137,7 +160,7 @@ async function updatePage(req, res){
 
 async function deleteImage(req, res){
   if(!req.params.collectionId || !req.params.imgName){
-    return res.status(400).json({ message: "Image dosen't exist", deletedImage: false });
+    return res.status(400).json({ message: "Image doesn't exist", deletedImage: false });
   }
   try{
     //Remove previous image by name 'imgName'
@@ -153,42 +176,41 @@ async function deleteImage(req, res){
       { new: true }
     );
     if(menuPageContentUpdated){
-      res.status(200).json({ message: "Deleted image", deletedImage: true });
+      res.status(200).json({ message: "Deleted image ", deletedImage: true });
     }else{
       res.status(400).json({ message: "Image doesn't exist", deletedImage: false });
     }
-
   }catch(e){
-    res.status(400).json({ message: "Image doesn't exist", deletedImage: false});
+    res.status(400).json({ message: "Image doesn't exist", deletedImage: false });
   }
 }
 
 async function deletePageData(req, res){
   let { ids: idsMainCollection } = req.body;
   try{
-    const boundModelsResult = await MenuPage.find({'id': { $in: idsMainCollection }}).populate('pageContent');
+    const boundModelsResult = await MenuPage.find({'id': { $in: idsMainCollection } }).populate('pageContent');
     const idsBoundCollection = [];
     const imagesBoundCollection = [];
-    // Find and copy IDs from the bound Nodel into the array
-    boundModelsResult.forEach((mainDoc) =>{
+    //Find and copy IDs from the bound Model into the array
+    boundModelsResult.forEach((mainDoc)=>{
       if(mainDoc.pageContent._id){
-        // Add '_id' to array
+        //Add '_id' to array
         idsBoundCollection.push(mainDoc.pageContent._id);
-        // Add 'singleImage' to array
+        //Add 'singleImage' to array
         if(mainDoc.pageContent.singleImage !== ''){
           imagesBoundCollection.push(mainDoc.pageContent.singleImage);
         }
       }
     });
-    // Removing images from the Server
+    //Removing images from the Server
     if(!!imagesBoundCollection.length){
       let i = 0;
       do{
-        removeFile(imagesBoundCollection[i])
-        i ++;
+        removeFile(imagesBoundCollection[i]);
+        i++;
       }while(imagesBoundCollection.length > i)
     }
-    // Removing data from the Models
+    //Removing data from the Models
     const delete1 = await MenuPage.deleteMany({ id: { $in : idsMainCollection } });
     const delete2 = await MenuPageContent.deleteMany({ _id: { $in : idsBoundCollection } });
     if(delete1.deletedCount === delete2.deletedCount){
@@ -218,7 +240,7 @@ const removeFile = (file)=>{
 
 async function addViewToPage(req, res){
   const errors = validationResult(req);
-  if(!errors.isEmpty()) {
+  if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
   let { reference, views } = req.params;
@@ -231,8 +253,53 @@ async function addViewToPage(req, res){
     if(viewAddedToPage){
       return res.status(200).json({ message: "Amount of views", views: viewAddedToPage.views });
     }
-  }catch(e){
+  } catch (e) {
     res.status(500).json(e);
+  }
+}
+
+async function changeLikeState(req, res){
+  const { id: _id } = req.user;
+  const referencePage = req.params.reference;
+  //'isValidId' checks if '_id' is mongoose id: mongoose.Types.ObjectId.isValid(_id)
+  if(!isValidId(_id)) return res.status(404).send('There is no page');
+  try{
+    //Get likes from related document collection
+    const pageWithContent = await MenuPage.find({
+      reference: referencePage
+    }).populate('pageContent');
+    //
+    if(!pageWithContent.length) res.status(404).json({ message: "Page is absent" });
+    //Check if user is already liked the page
+    let likes = pageWithContent[0].pageContent.likes;
+    //Check is the page liked
+    const index = likes.findIndex(id => {
+      return String(id) === String(_id);
+    });
+    // We send 'likeState' to the client as response
+    let likeState = false;
+    //If a person has not liked the post yet
+    if(index === -1){
+      likes.push(_id);
+      //The page is liked
+      likeState = true;
+    }else{
+      //Remove person's like
+      likes = likes.filter(id => {
+        return String(id) !== String(_id);
+      });
+    }
+    //Like updated in the array of likes
+    //The 'page' beneath is instead of this - { likes: (page.likes + 1) }
+    const pageUpdated = await MenuPageContent.findByIdAndUpdate(
+      { _id: pageWithContent[0].pageContent._id },
+      { likes },
+      { new: true });
+    if(pageUpdated){
+      return res.status(200).json({ message: "Likes state changed", likeState });
+    }
+  }catch(e){
+    res.status(404).json({ message: "Can't find the page", error: e });
   }
 }
 
@@ -244,5 +311,6 @@ module.exports = {
   updatePage,
   deleteImage,
   deletePageData,
-  addViewToPage
+  addViewToPage,
+  changeLikeState
 };
