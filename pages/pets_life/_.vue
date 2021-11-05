@@ -50,30 +50,93 @@
     <el-row v-if="result.contentBlockThree">
       <el-col :span="24" class="block-content-3">{{ result.contentBlockThree }}</el-col>
     </el-row>
+    <el-row >
+      <el-col :span="18">
+        <b class="amount-likes">Amount of likes: {{ totalLikes }}</b>
+      </el-col>
+      <el-col :span="6">
+        <el-button @click="processLike"
+          v-if="isUserAuthenticated.login !== ''"
+          class="process-like"
+          :loading="likeLoadingState"
+          :disabled="likeLoadingState">
+          <span :class="likeStateChanging ? 'like__img add-like__img' : 'like__img remove-like__img'"></span>
+          <span class="add-like__text">
+            {{ likeStateChanging ? 'Add like' : 'Cancel "like"' }}
+          </span>
+        </el-button>
+        <el-badge v-else class="like-forbidden">
+          Sign up/in to leave a like
+        </el-badge>
+      </el-col>
+    </el-row>
   </section>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
-  async asyncData({ $axios, route, redirect }){
+  async asyncData({ $axios, route, redirect, store }){
     try{
-      const result = await $axios.get(`/api/menu_page/page/${route.params.pathMatch}`);
-      // Query 'put' to add one view of the page
+      const result = await $axios.get(`/api/menu_page/page/${route.params.pathMatch}/${store.getters['auth/isUserAuthenticated'].jwtToken}`);
+      //Query "put" to add one view of the page
       await $axios.$put(`/api/menu_page/page/${route.params.pathMatch}/${result.data.pageContent.views}`);
-      return { result: result.data.pageContent }
+      return {
+        result: result.data.pageContent,
+        likeState: result.data.pageContent.likeState,
+        totalLikes: result.data.pageContent.likes.length
+      }
     }catch(e){
       return redirect('/');
     }
   },
-  head (){
+  head () {
     return {
       title: `${this.result.title}`
     }
   },
-  mounted(){
-    //console.log("Reference ",this.$route.params);
+  computed:{
+    ...mapGetters('auth', ['isUserAuthenticated']),
+    //If 'likeState' true - add like, otherwise remove like
+    likeStateChanging(){
+      if(this.likeState){
+          return false;
+        }
+      else{
+        return true;
+      }
+    }
+  },
+  data(){
+    return {
+      likeLoadingState: false
+    }
+  },
+  methods:{
+    processLike(e){
+      this.likeLoadingState = true;
+      window.setTimeout(async ()=>{
+        try{
+          let url = `/api/menu_page/page/likes/like_update/${this.$route.params.pathMatch}`;
+          const result = await this.$axios.$put(url);
+          if(result.likeState){
+            this.likeState = true;
+            this.totalLikes = ++this.totalLikes;
+          }else{
+            this.likeState = false;
+            this.totalLikes = --this.totalLikes;
+          }
+        }catch(e){
+            console.log(e);
+          }finally{
+            this.likeLoadingState = false;
+          }
+      },3000);
+    }
+  },
+  mounted() {
     if(this.result){
-    //console.log("Result ", new Date(this.result.date).toLocaleString());
+      //console.log("Result ",new Date(this.result.date).toLocaleString());
     }
   }
 }
@@ -143,6 +206,46 @@ $container-width: 960px;
 }
 .block-content-3{
   @include content(true, #9b205e);
+}
+.amount-likes{
+  position: relative;
+  top: 10px;
+  left: 77%;
+}
+.process-like{
+  background-color: #f8c5df;
+  margin: 0 0 5% 5%;
+  border: 1px solid#000;
+  border-radius: 5px;
+  display: inline-flex;
+  padding: .3em 1em;
+  &:hover, &:active{
+    color: #000;
+    background-color: #f1d9e5;
+    justify-content: space-around;
+  }
+}
+.like__img{
+  margin-right: .5em;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+.add-like__img{
+  background: transparent url('/site_images/likes.png') -21px -21px/40px 40px no-repeat padding-box border-box scroll;
+}
+.remove-like__img{
+  background: transparent url('/site_images/likes.png') 0px 0px/40px 40px no-repeat padding-box border-box scroll;
+}
+.add-like__text{
+  position: relative;
+  top: -5px;
+}
+.like-forbidden{
+  font-size: .8em;
+  padding: 10px 0 15px 0;
+  display: block;
+  color: #f53aa2;
 }
 
 </style>
