@@ -1,7 +1,8 @@
 const passport = require('passport');
+const authCabinet = passport.authenticate('jwt-cabinet', {session: false});
+const authCabinetAdmin = passport.authenticate('jwt-cabinet-admin', {session: false});
 const upload = require('./../middleware/file-uploads');
 const uploadOptimized = require('./../middleware/file-uploads-optimized');
-const authCabinetAdmin = passport.authenticate('jwt-cabinet-admin', {session: false});
 const controller = require('./../controllers/post');
 const { Router } = require('express');
 const router = Router();
@@ -48,17 +49,25 @@ router.delete(
 /*  Public  Routes */
 
 // '/api/post/'  -   get all Posts on the Site
-router.get( '/', controller.getPosts)
+router.get('/', controller.getPosts);
 
 // '/api/post/:id'   -   get Post by id on the Site
 router.get(
-  '/:id',
+  '/:id/:jwt?',
   controller.getClientPostById
 )
+
 // '/api/post/views/:id'   -   add view to a Post by id on the Site
 router.patch(
   '/views/:id',
   controller.addViewToPostById
+)
+
+// '/api/post/likes/:id'   -   add like to a Post by id on the Site
+router.patch(
+  '/likes/:id',
+  authCabinet,
+  controller.changeLikeState
 )
 
 module.exports = router
