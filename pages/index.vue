@@ -39,7 +39,6 @@ export default {
       this.userClearChatDataMethod();
       // Clear blog auth state
       this.userClearAuthDataMethod();
-      console.log("Unauth and chat");
     }
     // Just site log out
     if(message === 'unauthenticated'){
@@ -49,7 +48,6 @@ export default {
       });
       // Clear blog auth state
       this.userClearAuthDataMethod();
-      console.log("Unauth");
     }
   }
 }
