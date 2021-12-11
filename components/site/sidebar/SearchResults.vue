@@ -1,8 +1,10 @@
 <template>
   <div class="search-results">
     <slot name="header"></slot>
-    <div class="search-results__header">Posts result: {{ postSearchResults.length }}</div>
-    <ul v-if="!!postSearchResults.length" class="search-results__posts">
+    <div v-if="searchByPosts" class="search-results__header">
+      Posts result: {{ postSearchResults.length }}
+    </div>
+    <ul v-if="searchByPosts && !!postSearchResults.length" class="search-results__posts">
       <li v-for="post of postSearchResults" :key="post.id">
         <span>
           <nuxt-link
@@ -12,13 +14,15 @@
         </span>
       </li>
     </ul>
-    <hr />
-    <div class="search-results__header">Pages result: {{ pageSearchResults.length }}</div>
-    <ul v-if="!!pageSearchResults.length" class="search-results__pages">
+    <hr v-if="searchByPages" />
+    <div v-if="searchByPages" class="search-results__header">
+      Pages result: {{ pageSearchResults.length }}
+    </div>
+    <ul v-if="searchByPages && !!pageSearchResults.length" class="search-results__pages">
       <li v-for="page of pageSearchResults" :key="page.id">
         <span>
           <nuxt-link
-            :to="`/sport_life/${page.id}`" append >
+            :to="`/pets_life/${page.id}`" append >
             {{ page.title }}
           </nuxt-link>
         </span>
@@ -39,6 +43,8 @@ export default {
   props:{
     postSearchResults: { type: Array },
     pageSearchResults: { type: Array },
+    searchByPosts: { type: Boolean },
+    searchByPages: { type: Boolean },
     clearSearchResults: { type: Function }
   },
   data(){
