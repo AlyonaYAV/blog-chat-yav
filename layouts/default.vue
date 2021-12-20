@@ -9,17 +9,24 @@
         <Nuxt />
       </el-main>
     </el-container>
-    <el-footer class="el-footer-main-layout">Footer</el-footer>
+    <el-footer class="el-footer-main-layout">
+      <social-buttons />
+      <div class="el-footer-main-layout_date">
+        All rights reserved. AYav &copy; {{ String(new Date().getFullYear()) }}
+      </div>
+    </el-footer>
   </el-container>
 </template>
 
 <script>
 import Navigation from './../components/site/Navigation';
 import SideBar from './../components/site/sidebar/SideBar';
+import SocialButtons from './../components/site/footer/SocialButtons';
 export default {
   components: {
     Navigation,
-    SideBar
+    SideBar,
+    SocialButtons
   },
   computed: {
     error () {
@@ -79,7 +86,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 html {
   font-family:
     Roboto,
@@ -101,7 +108,13 @@ html {
   padding: 0;
 }
 .el-footer-main-layout{
-  padding: 0;
+  height: auto!important;
+  padding: .5em 1em .5em;
   background-color:#cc6699;
+}
+.el-footer-main-layout_date{
+  padding: .5em 1em .5em;
+  font-size: .9em;
+  color: #f6f6f6;
 }
 </style>
