@@ -41,6 +41,9 @@
 
 <script>
   export default {
+    head:{
+    title: 'Registration page'
+    },
     data() {
       var validatePass = (rule, value, callback) => {
         if (value === '') {

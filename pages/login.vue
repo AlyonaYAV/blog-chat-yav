@@ -15,6 +15,9 @@ export default {
     return { isAdmin: true } // dbState.isAdmin
   },*/
   name: 'login',
+  head:{
+    title: 'login page'
+  },
   components: { AdminLogin },
   mounted(){
     const { message } = this.$route.query;
