@@ -8,7 +8,11 @@
         <Nuxt />
       </el-main>
     </el-container>
-    <el-footer class="el-footer-main-layout">Footer</el-footer>
+    <el-footer class="el-footer-main-layout">
+      <div class="el-footer-main-layout__date">
+        All rights reserved. AYav &copy; {{ String(new Date().getFullYear()) }}
+      </div>
+    </el-footer>
   </el-container>
 </template>
 
@@ -48,7 +52,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scope>
 html {
   font-family:
     Roboto,
@@ -70,7 +74,13 @@ html {
   padding: 0;
 }
 .el-footer-main-layout{
-  padding: 0;
+  height: auto!important;
+  padding: .5em 1em .5em;
   background-color:#cc6699;
+  .el-footer-main-layout__date{
+    padding: .5em 1em .5em;
+    font-size: .9em;
+    color: #f6f6f6;
+  }
 }
 </style>

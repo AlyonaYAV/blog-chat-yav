@@ -11,7 +11,7 @@
     </el-container>
     <el-footer class="el-footer-main-layout">
       <social-buttons />
-      <div class="el-footer-main-layout_date">
+      <div class="el-footer-main-layout__date">
         All rights reserved. AYav &copy; {{ String(new Date().getFullYear()) }}
       </div>
     </el-footer>
@@ -86,7 +86,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 html {
   font-family:
     Roboto,
@@ -111,10 +111,10 @@ html {
   height: auto!important;
   padding: .5em 1em .5em;
   background-color:#cc6699;
-}
-.el-footer-main-layout_date{
-  padding: .5em 1em .5em;
-  font-size: .9em;
-  color: #f6f6f6;
+  .el-footer-main-layout__date{
+    padding: .5em 1em .5em;
+    font-size: .9em;
+    color: #f6f6f6;
+  }
 }
 </style>
