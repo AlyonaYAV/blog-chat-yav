@@ -3,6 +3,25 @@
     <el-tabs type="card" @tab-click="handleTabs">
         <el-tab-pane :label="tab1.label">
           <p class="static-page__tab-header">Here you can manage static pages</p>
+          <div v-if="limit !== null">
+            <p v-if="limitPagesCollision" class="static-page__collision">
+              <b>Warning!!! If you see this.</b>
+              The limit of pages is bigger than the amount of pages.
+              Set the <span class="l">limit</span> equal to <span class="a">amount</span> or lower
+            </p>
+            <p class="static-page__limit">The limit of displayed pages: {{ limit }}</p>
+            <p class="static-page__total">Total amount of pages: {{ totalStatic }}</p>
+          </div>
+          <div v-if="role">
+            <static-pages-limit v-if="limit !== null"
+              :staticLimit="limit"
+              :totalStatic="totalStatic"
+              :updateLimit="updateLimit"
+            />
+            <el-button v-else size="mini" @click="getLimitAgain">
+              Load static limit again
+            </el-button>
+          </div>
         </el-tab-pane>
         <el-tab-pane :label="tab2.label">
           <p class="static-page__tab-header">Here you can see a lis of all static page</p>
@@ -105,6 +124,7 @@
 
 <script>
 import StaticPage from './../../components/admin/static_pages/StaticPage.vue';
+import StaticPagesLimit from './../../components/admin/static_pages/StaticPagesLimit.vue';
 export default {
   async asyncData(context){
     let jwt = context.store.getters['auth/isUserAuthenticated'].jwtToken;
@@ -124,14 +144,28 @@ export default {
     if(userData.role === 'moderator'){
       role = false;
     }
+    let totalStatic = null;
+    let limit = null;
+    try{
+      const result = await context.$axios.$get('/api/settings/admin/limit');
+      if(result){
+        limit = result.staticPagesLimit;
+        totalStatic = result.totalPages;
+      }
+    }catch(e){
+      //console.log(e);
+    }
     return {
       userLogoutRefresh: userData.sessionEnd ? true : false,
-      role
+      role,
+      limit,
+      totalStatic
     };
   },
   layout: 'admin',
   components:{
-    StaticPage
+    StaticPage,
+    StaticPagesLimit
   },
   data(){
     return {
@@ -161,6 +195,15 @@ export default {
       loadingBtn: false,
     };
   },
+  computed:{
+    limitPagesCollision(){
+      //We have a collision
+      if(this.totalStatic < this.limit){
+        return true;
+      }
+      return false;
+    }
+  },
   methods:{
     handleTabs(tab, event) {
       //Check current 'tab'
@@ -174,7 +217,7 @@ export default {
           this.currentTab = tab.label;
           //Try to get all the static pages
           this.getAllStaticPages();
-          // Save current tab
+          //Save current tab
           this.currentTabClicked = tab.label;
         break;
         case this.tab3.label : this.currentTab = tab.label;
@@ -190,7 +233,7 @@ export default {
             return true;
           }
           this.currentTab = tab.label;
-        //Reset component's data during switching between Tabs
+          //Reset component's data during switching between Tabs
           this.pageName = '';
           this.pageHeader = '';
           this.pageText = '';
@@ -198,7 +241,7 @@ export default {
           this.getAllStaticPages();
           //Clear selected drop down list
           this.staticPageToUpdate = '';
-          // Save current tab
+          //Save current tab
           this.currentTabClicked = tab.label;
         break;
       }
@@ -264,6 +307,8 @@ export default {
               this.pageName = '';
               this.pageHeader = '';
               this.pageText = '';
+              //Update 'totalStatic' pages
+              this.totalStatic = ++this.totalStatic;
               //Re-render component
               this.creationUpdate += 1;
               this.$message({
@@ -367,6 +412,8 @@ export default {
                 this.allStaticPages = this.allStaticPages.filter( staticPage => {
                   return staticPage.name !== name;
                 });
+                //Update 'totalStatic' pages
+                this.totalStatic = --this.totalStatic;
                 this.$message({
                   showClose: true,
                   message: `Static page ${name} has been deleted`,
@@ -394,6 +441,23 @@ export default {
     //This function calls in child and clears selected static page
     clearSelectedPage(emptyStr){
       this.staticPageToUpdate = emptyStr;
+    },
+    //Get limit of static pages again
+    async getLimitAgain(){
+      try{
+        const result = await this.$axios.$get('/api/settings/admin/limit');
+        if(result){
+          this.limit = result.staticPagesLimit;
+          this.totalStatic = result.totalPages;
+          console.log(result);
+        }
+      }catch(e){
+        console.log(e);
+      }
+    },
+    //This function will be called by child
+    updateLimit(val){
+      this.limit = val;
     }
   },
   mounted(){
@@ -419,6 +483,36 @@ body{
 }
 .static-page__tab-header{
   margin-bottom: .5em;
+}
+.static-page__collision{
+  color:#d60606;
+  padding: .5em;
+  border:1px solid #fa0a0a;
+  border-radius: 5px;
+  width:30%;
+  font-size: .9em;
+  b{
+    margin-left:10%;
+  }
+  .l{
+    color: #6d7af0;
+  }
+  .a{
+    color: #5eb952;
+  }
+}
+.static-page__limit{
+  text-indent: 1em;
+  color:#6d7af0;
+  font-size: .9em;
+  margin-top:1em;
+  margin-bottom: .5em;
+}
+.static-page__total{
+  text-indent: 1em;
+  color:#5eb952;
+  font-size: .9em;
+  margin-bottom:1em;
 }
 .select-page div.el-input{
   border: 1px solid #f00;
