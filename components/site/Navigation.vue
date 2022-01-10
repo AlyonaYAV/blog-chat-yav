@@ -87,7 +87,7 @@ import { mapState } from 'vuex';
       },
       async getStaticPages(){
         try{
-          const result = await this.$axios.$get('/api/static_page/pages');
+          const result = await this.$axios.$get('/api/static_page/pages/limited');
           if(result){
             return result.static;
           }
