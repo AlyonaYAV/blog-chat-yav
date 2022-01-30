@@ -51,7 +51,7 @@
             </el-badge>
           </div>
         </div>
-        <footer class="posts-details__comments">
+        <footer class="post-details__comments">
             <div v-if="user.login">
                 <blog-comment-form
                     :postId="post._id"
