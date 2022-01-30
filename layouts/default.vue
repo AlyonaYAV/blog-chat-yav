@@ -3,7 +3,19 @@
     <el-header height="70px" class="el-header-main-layout">
       <Navigation />
     </el-header>
-    <el-container>
+    <el-container class="el-container-main-layout">
+      <input type="checkbox" id="check" />
+      <label for="check">
+        <i>
+          <span></span>
+          <span></span>
+        </i>
+        <i>
+          <span></span>
+          <span></span>
+          <span></span>
+        </i>
+      </label>
       <side-bar  v-if="sidebar" :sidebarBlocks="sidebarBlocks" />
       <el-main>
         <Nuxt />
