@@ -37,14 +37,14 @@
       <el-col :span="6">
         <div class="chat-status">
           <p>User ban status in chat</p>
-          <el-tag v-if="!chatBan" class="chat-tag" type="success">Yuo may visit the chat</el-tag>  
+          <el-tag v-if="!chatBan" class="chat-tag" type="success">You may visit the chat</el-tag>  
           <el-tag v-else class="chat-tag" type="danger">The chat access is not allowed</el-tag>  
         </div>
       </el-col>
     </el-row>
     <el-row v-else>
       <el-col :span="24">
-        <p style="textAlign:center">You dont have enough permissions to view the content</p>
+        <p style="textAlign:center">You don't have enough permissions to view the content</p>
       </el-col>
     </el-row>
   </div>
