@@ -1,5 +1,5 @@
 <template>
-  <div class="pets-forgotot-password">
+  <div class="pets-forgot-password">
     <h3>Enter the email address where the new password will be sent</h3>
     <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="120px" class="pets-forgot-password__ruleForm">
         <el-form-item label="Email" prop="email">
@@ -7,7 +7,7 @@
         </el-form-item>
         <el-form-item>
           <el-button
-            class="pets-forgotot-password__bt"
+            class="pets-forgot-password__bt"
             type="primary"
             :loading="loading"
             @click.native.prevent="submitForm('ruleForm')">
@@ -76,7 +76,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.pets-forgotot-password{
+.pets-forgot-password{
   width: 650px;
   margin: 5% 0% 0% 15%;
   h3{
@@ -84,7 +84,7 @@ export default {
     font-size: 0.9em;
   }
   .pets-forgot-password__ruleForm{
-    .pets-forgotot-password__bt{
+    .pets-forgot-password__bt{
       background-color: #da2fb5!important;
       &:hover{
         background-color: #fa8fe1 !important;
