@@ -11,7 +11,9 @@
           </v-row>
         </v-container>
         <v-footer class="el-footer-main-layout" app :padless="true" color="#225AA4" :height="60">
-          <p>Footer</p>
+          <div class="el-footer-main-layout__date">
+            All rights reserved. AYav &copy; {{ String(new Date().getFullYear()) }}
+          </div>
         </v-footer>
     </v-app>
 </template>
