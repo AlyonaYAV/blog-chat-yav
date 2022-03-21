@@ -99,7 +99,7 @@ export default {
   },
   layout: 'chat/index',
   head: {
-    title: 'Sports Chat'
+    title: 'Pets Chat'
   },
   sockets: {
     connect () {
