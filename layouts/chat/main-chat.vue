@@ -1,15 +1,19 @@
 <template>
-    <v-app>
-        <v-container fluid style="padding:0px !important;">
+    <v-app :style="{ overflowX: 'clip' }">
+        <v-container class="container-chat chat" fluid>
             <header-chat></header-chat>
             <v-row v-bind:no-gutters="true" style="position:relative;">
                 <v-col xs="3" sm="3" md="3" lg="3" xl="3">
-                    <v-navigation-drawer absolute v-model="drawer" :width="330" :height="400" style="top:0px;">
+                    <v-navigation-drawer absolute v-model="drawer" :width="320" :height="400" mobile-breakpoint="320">
                         <v-alert
                             border="bottom"
                             color="#B34591"
                             dark
                             class="pets-text-center"
+                            @click="()=>{
+                              drawer = !drawer
+                              drawer ? cols = 9 : cols = 12
+                            }"
                         >
                             All people in the chat room
                         </v-alert>
@@ -62,7 +66,7 @@
                                                     :absolute="true"
                                                     style="right:25px;top:5px;background:#F7E7F5;"
                                                     @click="exit"
-                                                    class="hidden-xs-only">
+                                                    >
                                                     <v-icon>mdi-home</v-icon>
                                                 </v-btn>
                                             </v-col>
@@ -116,8 +120,10 @@
                 </v-col>
             </v-row>
         </v-container>
-        <v-footer app :padless="true" color="#cc6699" :height="50">
-            <p>Footer</p>
+        <v-footer class="v-footer-main-layout" app :padless="true" color="#cc6699" :height="50">
+            <div class="v-footer-main-layout__date">
+                All rights reserved. AYav &copy; {{ String(new Date().getFullYear()) }}
+            </div>
         </v-footer>
     </v-app>
 </template>
@@ -162,7 +168,7 @@ export default {
   padding-bottom: 0px;
 }
 .chat-pets-content{
-  height: 65vh;
+  height: 50vh;
   border: 1px solid #D3C4D1;
   background-color: #F7E7F5;
   padding-bottom: 0px !important;
@@ -170,4 +176,15 @@ export default {
  .pets-text-center{
     text-align: center;
  }
+ .v-footer-main-layout{
+  padding: 0;
+  background-color:#cc6699!important;
+  .v-footer-main-layout__date{
+    padding: .5em 1em .5em;
+    font-size: .9em;
+    color: #f6f6f6;
+    text-align: center;
+    width: 100%;
+  }
+}
 </style>
