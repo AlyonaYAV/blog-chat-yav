@@ -10,8 +10,8 @@
             </v-col>
           </v-row>
         </v-container>
-        <v-footer class="el-footer-main-layout" app :padless="true" color="#225AA4" :height="60">
-          <div class="el-footer-main-layout__date">
+        <v-footer class="v-footer-main-layout" app :padless="true" color="#225AA4" :height="60">
+          <div class="v-footer-main-layout__date">
             All rights reserved. AYav &copy; {{ String(new Date().getFullYear()) }}
           </div>
         </v-footer>
@@ -55,8 +55,15 @@ export default {
 </script>
 
 <style lang="scss">
-.el-footer-main-layout{
+.v-footer-main-layout{
   padding: 0;
   background-color:#cc6699!important;
+  .v-footer-main-layout__date{
+    padding: .5em 1em .5em;
+    font-size: .9em;
+    color: #f6f6f6;
+    text-align: center;
+    width: 100%;
+  }
 }
 </style>
