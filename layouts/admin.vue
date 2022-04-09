@@ -1,5 +1,5 @@
 <template>
-    <el-container class="el-wrapper-main-layout">
+    <el-container class="admin el-wrapper-main-layout">
         <el-header height="70px" class="el-header-main-layout">
             Header
         </el-header>
