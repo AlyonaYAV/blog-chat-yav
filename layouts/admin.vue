@@ -3,11 +3,23 @@
         <el-header height="70px" class="el-header-main-layout">
             Header
         </el-header>
-        <el-container>
+        <el-container class="el-aside-primary-main-layout">
+          <input type="checkbox" id="sandwich" />
+          <label for="sandwich">
+            <i>
+              <span></span>
+              <span></span>
+            </i>
+            <i>
+              <span></span>
+              <span></span>
+              <span></span>
+            </i>
+          </label>
             <el-aside class="el-aside-main-layout">
               <menu-aside />
             </el-aside>
-            <el-main>
+            <el-main class="el-primary-main-layout">
                 <Nuxt />
             </el-main>
         </el-container>
