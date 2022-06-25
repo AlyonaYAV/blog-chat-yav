@@ -463,6 +463,26 @@ $asideWidth: 180px;
             }
           }
         }
+        /*Chat room creation page*/
+        .room-creation{
+          .el-form.room-creation__form{
+            width: 100%;
+            font-size: .8em;
+            .el-form-item{
+              .el-form-item__label{
+                font-size: .9em;
+              }
+              .el-form-item__content{
+                margin-left: 50px!important;
+              }
+              .el-button{
+                font-size: .9em;
+                height: 30px;
+                padding: 5px 10px;
+              }
+            }
+          }
+        }
       }
     }
     /*footer*/
@@ -866,6 +886,27 @@ $asideWidth: 180px;
             }
           }
         }
+        /*Chat room creation page*/
+        .room-creation{
+          .el-form.room-creation__form{
+            width: 100%;
+            font-size: .9em;
+            .el-form-item{
+              .el-form-item__label{
+                font-size: .9em;
+              }
+              .el-form-item__content{
+                margin-left: 50px!important;
+                width: 80%;
+              }
+              .el-button{
+                font-size: .9em;
+                height: 30px;
+                padding: 5px 10px;
+              }
+            }
+          }
+        }
       }
     }
     /*footer*/
@@ -1229,6 +1270,27 @@ $asideWidth: 180px;
           margin: 10px 5px;
           button:last-child{
             margin-top: 10px;
+          }
+        }
+        /*Chat room creation page*/
+        .room-creation{
+          .el-form.room-creation__form{
+            width: 100%;
+            font-size: .9em;
+            .el-form-item{
+              .el-form-item__label{
+                font-size: .9em;
+              }
+              .el-form-item__content{
+                margin-left: 50px!important;
+                width: 60%;
+              }
+              .el-button{
+                font-size: 1em;
+                height: 35px;
+                padding: 7px 12px;
+              }
+            }
           }
         }
       }
